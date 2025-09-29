@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Assets.Scripts.StateMachine.Player.States
 {
@@ -10,17 +11,18 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            throw new NotImplementedException();
+            
         }
 
 
         public override void Tick(float deltaTime)
         {
-            throw new NotImplementedException();
+            if (Input.GetKeyDown(KeyCode.Space))
+                AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
         }
         public override void Exit()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
