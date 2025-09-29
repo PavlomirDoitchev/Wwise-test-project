@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.State_Machine.Player_State_Machine;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.StateMachine.Player.States
@@ -11,18 +12,36 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            
+            _playerStateMachine.Animator.CrossFadeInFixedTime("Locomotion", 0.1f);
         }
 
 
         public override void Tick(float deltaTime)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-                AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
+            PlayerMove(deltaTime);
+            Fall();
+            DoJump();
         }
         public override void Exit()
         {
             
+        }
+        private void Fall()
+        {
+            if (_playerStateMachine.CharacterController.velocity.y <= -10)
+            {
+                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
+                return;
+            }
+        }
+
+        private void DoJump()
+        {
+            if (_playerStateMachine.InputManager.PlayerJumpInput() && _playerStateMachine.CharacterController.isGrounded)
+            {
+                AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
+                _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
+            }
         }
     }
 }
