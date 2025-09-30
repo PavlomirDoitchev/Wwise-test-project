@@ -23,18 +23,17 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoJump();
             Vector2 moveInput = _playerStateMachine.InputManager.MovementInput();
             bool wantsToAttack = _playerStateMachine.InputManager.PlayerAttackInput();
+            bool isSprinting = _playerStateMachine.InputManager.PlayerSprintInput();
 
             if (wantsToAttack)
             {
-                if (moveInput != Vector2.zero)
+                if (isSprinting && moveInput != Vector2.zero)
                 {
-                    // Sprint attack
                     _playerStateMachine.ChangeState(new PlayerSprintAttackState(_playerStateMachine));
                     return;
                 }
                 else
                 {
-                    // Normal attack
                     _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
                     return;
                 }

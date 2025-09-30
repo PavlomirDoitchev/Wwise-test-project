@@ -26,6 +26,8 @@ namespace Assets.Scripts.StateMachine.Player.States
             queuedNextAttack = false;
             PlayAttackAnimation();
             AddForwardMomentum();
+            AkUnitySoundEngine.PostEvent("Play_Sword_Swing", _playerStateMachine.gameObject);
+
         }
 
         public override void Tick(float deltaTime)
@@ -65,6 +67,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                     PlayAttackAnimation();
                     AddForwardMomentum();
                     _playerStateMachine.ComboCooldown.Reset();
+                    AkUnitySoundEngine.PostEvent("Play_Sword_Swing", _playerStateMachine.gameObject);
                 }
             }
 

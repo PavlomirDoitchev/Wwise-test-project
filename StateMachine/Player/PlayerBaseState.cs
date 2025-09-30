@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+
 namespace Assets.Scripts.StateMachine.Player
 {
     /// <summary>
-    /// The base state for all player states.
+    /// Base class for all player states, handling movement and rotation.
     /// </summary>
     public abstract class PlayerBaseState : State
     {
@@ -10,62 +11,90 @@ namespace Assets.Scripts.StateMachine.Player
 
         public PlayerBaseState(PlayerStateMachine stateMachine)
         {
-            this._playerStateMachine = stateMachine;
+            _playerStateMachine = stateMachine;
         }
+
+        #region Movement
+
         /// <summary>
-        /// Preserve momentum. Used in PlayerMove().
+        /// Moves the player including applied forces from ForceReceiver.
         /// </summary>
-        /// <param name="movement"></param>
-        /// <param name="deltaTime"></param>
         protected void Move(Vector3 movement, float deltaTime)
         {
             _playerStateMachine.CharacterController.Move((movement + _playerStateMachine.ForceReceiver.Movement) * deltaTime);
+
+            Vector3 pos = _playerStateMachine.transform.position;
+            pos.z = 0f;
+            _playerStateMachine.transform.position = pos;
         }
+
         /// <summary>
-        /// Apply physics. Sets Vector3 to 0.
+        /// Moves only by forces (used when no input movement).
         /// </summary>
-        /// <param name="deltaTime"></param>
         protected void Move(float deltaTime)
         {
             Move(Vector3.zero, deltaTime);
         }
+
+        /// <summary>
+        /// Standard locomotion movement. Sets speed to .5 for walk, 1 for sprint.
+        /// </summary>
+        protected void PlayerMove(float deltaTime)
+        {
+            Vector2 input = _playerStateMachine.InputManager.MovementInput();
+            bool isSprinting = _playerStateMachine.InputManager.PlayerSprintInput();
+
+            float baseSpeed = 7.5f;
+
+            float speedMultiplier = isSprinting ? 1.3f : 1f;
+
+            Vector3 movement = CalculateHorizontalMovement() * baseSpeed * speedMultiplier;
+
+            Move(movement, deltaTime);
+            HandleFlip(input.x);
+
+            // Update animator locomotion parameter
+            float locomotionValue = 0f;
+            if (input != Vector2.zero)
+                locomotionValue = isSprinting ? 1f : 0.5f;
+
+            _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.01f, deltaTime);
+        }
+
+        /// <summary>
+        /// Movement used during attacks to preserve rotation/flip without modifying speed.
+        /// </summary>
         protected void RotateDuringAttack(float deltaTime)
         {
             Move(deltaTime);
             HandleFlip(_playerStateMachine.InputManager.MovementInput().x);
         }
-        protected void PlayerMove(float deltaTime)
-        {
-            Vector3 movement = CalculateMovement();
-            float multiplier = 10f;
-            Move(movement * multiplier, deltaTime);
 
-            HandleFlip(_playerStateMachine.InputManager.MovementInput().x);
-
-            if (movement != Vector3.zero)
-                _playerStateMachine.Animator.SetFloat("Locomotion", 1, 0.01f, deltaTime);
-            else
-                _playerStateMachine.Animator.SetFloat("Locomotion", 0, 0.1f, deltaTime);
-        }
         /// <summary>
-        /// Basic movement calculation
+        /// Calculates horizontal movement vector based on input.
         /// </summary>
-        /// <returns></returns>
-        private Vector3 CalculateMovement()
+        private Vector3 CalculateHorizontalMovement()
         {
             float horizontal = _playerStateMachine.InputManager.MovementInput().x;
-
-            Vector3 movement = new Vector3(horizontal, 0, 0);
-            return movement;
+            return new Vector3(horizontal, 0f, 0f);
         }
+
+        #endregion
+
+        #region Rotation
+
+        /// <summary>
+        /// Flips player to face the direction of horizontal input.
+        /// </summary>
         protected void HandleFlip(float horizontalInput)
         {
-            if (horizontalInput != 0)
+            if (horizontalInput != 0f)
             {
                 float yRotation = horizontalInput > 0 ? 90f : -90f;
-
                 _playerStateMachine.transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
             }
         }
+
+        #endregion
     }
 }

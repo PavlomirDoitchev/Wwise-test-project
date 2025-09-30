@@ -9,7 +9,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         private float animationTimer = 0f;
         private float currentClipLength = 0f;
         private float crossfadeDuration = 0.05f;
-        private float forwardForce = 30f; // Stronger than normal attack
+        private float forwardForce = 30f;
 
         public PlayerSprintAttackState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
@@ -18,17 +18,18 @@ namespace Assets.Scripts.StateMachine.Player.States
             animationTimer = 0f;
             _playerStateMachine.Animator.CrossFadeInFixedTime(sprintAttackAnimation, crossfadeDuration);
 
-            // Add strong forward momentum
             _playerStateMachine.ForceReceiver.SetForce(_playerStateMachine.transform.forward * forwardForce);
+
+            AkUnitySoundEngine.PostEvent("Play_Swing_Woosh", _playerStateMachine.gameObject);
         }
 
         public override void Tick(float deltaTime)
         {
-            Move(deltaTime); // Still allow physics/momentum
+            Move(deltaTime); 
 
             animationTimer += deltaTime;
 
-            // Exit once the animation finishes
+            
             AnimatorClipInfo[] clipInfo = _playerStateMachine.Animator.GetCurrentAnimatorClipInfo(0);
             if (clipInfo.Length > 0)
                 currentClipLength = clipInfo[0].clip.length;
@@ -41,7 +42,6 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Exit()
         {
-            // Reset forces to avoid lingering sprint momentum
             _playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
         }
     }
