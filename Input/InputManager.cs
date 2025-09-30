@@ -37,8 +37,8 @@ public class InputManager : MonoBehaviour
     }
 
     public bool PlayerJumpInput() => Input.GetKey(keyBindingsDict["Jump"][0]);
+    public bool PlayerAttackInput() => Input.GetKeyDown(keyBindingsDict["Attack"][0]);
     //public bool PlayerDodgeInput() => Input.GetKeyDown(keyBindingsDict["Dodge"][0]);
-    //public bool BasicAttackInput() => Input.GetKey(keyBindingsDict["Attack"][0]);
     //public bool PlayerMountInput() => Input.GetKeyDown(keyBindingsDict["Mount"][0]);
     //public bool PlayerDismountInput() => Input.GetKeyDown(keyBindingsDict["Dismount"][0]);
 

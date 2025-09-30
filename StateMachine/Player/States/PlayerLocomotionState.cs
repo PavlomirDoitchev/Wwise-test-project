@@ -21,6 +21,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             PlayerMove(deltaTime);
             Fall();
             DoJump();
+            DoAttack();
         }
         public override void Exit()
         {
@@ -41,6 +42,13 @@ namespace Assets.Scripts.StateMachine.Player.States
             {
                 AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
                 _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
+            }
+        }
+        private void DoAttack()
+        {
+            if (_playerStateMachine.InputManager.PlayerAttackInput())
+            {
+                _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
             }
         }
     }

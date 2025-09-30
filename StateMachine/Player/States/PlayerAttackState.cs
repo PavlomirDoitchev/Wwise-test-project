@@ -25,7 +25,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             timer -= deltaTime;
             if (stateInfo.normalizedTime >= 1f)
             {
-                if (attackIndex < attackAnimations.Length - 1 && _playerStateMachine.InputManager.IsAttacking)
+                if (attackIndex < attackAnimations.Length - 1 && _playerStateMachine.InputManager.PlayerAttackInput())
                 {
                     attackIndex++;
                     PlayAttackAnimation();
