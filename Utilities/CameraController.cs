@@ -15,7 +15,7 @@ public class CameraZoom : MonoBehaviour
     private void Awake()
     {
         cam = GetComponent<Camera>();
-        currentDistance = Mathf.Clamp(maxDistance * 0.7f, minDistance, maxDistance);
+        currentDistance = maxDistance;
     }
 
     private void LateUpdate()

@@ -12,7 +12,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            _playerStateMachine.Animator.CrossFadeInFixedTime("Locomotion", 0.1f);
+            _playerStateMachine.Animator.Play("Locomotion");
         }
 
 

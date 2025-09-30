@@ -8,8 +8,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
     {
         private Vector3 momentum;
         private float maxFallSpeed;
-        private int fallDamage;
-        bool canCastWhileFalling = false;
+        private readonly string landingSound = "Play_Dirt_Landing";
         public PlayerFallState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -28,13 +27,17 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
 
             if (_playerStateMachine.CharacterController.isGrounded)
             {
+                if (_playerStateMachine.InputManager.MoveInput.x == 0)
+                {
+                    AkUnitySoundEngine.PostEvent(landingSound, _playerStateMachine.gameObject);
+
+                }
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             }
         }
 
         public override void Exit()
         {
-            Debug.Log("Exit Fall State");
         }
 
     }
