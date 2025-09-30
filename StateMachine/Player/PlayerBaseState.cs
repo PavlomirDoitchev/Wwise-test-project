@@ -47,18 +47,20 @@ namespace Assets.Scripts.StateMachine.Player
             float baseSpeed = 7.5f;
 
             float speedMultiplier = isSprinting ? 1.3f : 1f;
+            Vector2 filteredInput = GetFilteredMovementInput();
+            Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
 
-            Vector3 movement = CalculateHorizontalMovement() * baseSpeed * speedMultiplier;
-
+            // Move the character
             Move(movement, deltaTime);
-            HandleFlip(input.x);
+            HandleFlip(filteredInput.x);
 
-            // Update animator locomotion parameter
+            // Update animator locomotion
             float locomotionValue = 0f;
-            if (input != Vector2.zero)
+            if (filteredInput != Vector2.zero)
                 locomotionValue = isSprinting ? 1f : 0.5f;
 
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.01f, deltaTime);
+            
         }
 
         /// <summary>
@@ -75,10 +77,20 @@ namespace Assets.Scripts.StateMachine.Player
         /// </summary>
         private Vector3 CalculateHorizontalMovement()
         {
+
             float horizontal = _playerStateMachine.InputManager.MovementInput().x;
             return new Vector3(horizontal, 0f, 0f);
         }
+        protected Vector2 GetFilteredMovementInput()
+        {
+            Vector2 input = _playerStateMachine.InputManager.MovementInput();
 
+            // Only block if the blocker still exists
+            if (_playerStateMachine.currentLeftBlocker != null && input.x < 0) input.x = 0f;
+            if (_playerStateMachine.currentRightBlocker != null && input.x > 0) input.x = 0f;
+
+            return input;
+        }
         #endregion
 
         #region Rotation

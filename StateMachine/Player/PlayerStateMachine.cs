@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Entities;
 using Assets.Scripts.StateMachine.Player.States;
+using Assets.Scripts.Utilities.Contracts;
 using UnityEngine;
 namespace Assets.Scripts.StateMachine.Player
 {
@@ -13,6 +14,8 @@ namespace Assets.Scripts.StateMachine.Player
         public Cooldown ComboCooldown { get; private set; }
         [SerializeField] float comboTimeout = 2f;
         public int ComboIndex { get; set; } = 0;
+        public INotPushable currentLeftBlocker = null;
+        public INotPushable currentRightBlocker = null;
 
         private void Awake()
         {
@@ -21,6 +24,35 @@ namespace Assets.Scripts.StateMachine.Player
         private void Start()
         {
             ChangeState(new PlayerLocomotionState(this));
+        }
+        private void FixedUpdate()
+        {
+            if (currentLeftBlocker != null)
+            {
+                Vector3 origin = transform.position + Vector3.up * 0.5f;
+                if (!Physics.Raycast(origin, Vector3.left, 0.6f))
+                    currentLeftBlocker = null;
+            }
+
+            if (currentRightBlocker != null)
+            {
+                Vector3 origin = transform.position + Vector3.up * 0.5f;
+                if (!Physics.Raycast(origin, Vector3.right, 0.6f))
+                    currentRightBlocker = null;
+            }
+        }
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.gameObject.TryGetComponent<IPushable>(out _)) return;
+
+            if (hit.gameObject.TryGetComponent<INotPushable>(out INotPushable notPushable))
+            {
+                if (Mathf.Abs(hit.normal.y) < 0.1f) 
+                {
+                    if (hit.normal.x > 0) currentLeftBlocker = notPushable;
+                    if (hit.normal.x < 0) currentRightBlocker = notPushable;
+                }
+            }
         }
     }
 }
