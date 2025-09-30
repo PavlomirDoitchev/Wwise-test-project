@@ -44,7 +44,7 @@ namespace Assets.Scripts.StateMachine.Player
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
             bool isSprinting = _playerStateMachine.InputManager.PlayerSprintInput();
 
-            float baseSpeed = 7.5f;
+            float baseSpeed = 6f;
 
             float speedMultiplier = isSprinting ? 1.3f : 1f;
             Vector2 filteredInput = GetFilteredMovementInput();
