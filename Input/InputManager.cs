@@ -7,7 +7,6 @@ public class InputManager : MonoBehaviour
     [SerializeField] private List<KeyBinding> keyBindingsList = new List<KeyBinding>();
 
     private Dictionary<string, KeyCode[]> keyBindingsDict;
-    [field: SerializeField] public bool IsAttacking { get; set; }
     public Vector2 MoveInput { get; private set; }
 
     private void Awake()

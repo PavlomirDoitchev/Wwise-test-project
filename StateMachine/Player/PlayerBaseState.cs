@@ -29,6 +29,11 @@ namespace Assets.Scripts.StateMachine.Player
         {
             Move(Vector3.zero, deltaTime);
         }
+        protected void RotateDuringAttack(float deltaTime)
+        {
+            Move(deltaTime);
+            HandleFlip(_playerStateMachine.InputManager.MovementInput().x);
+        }
         protected void PlayerMove(float deltaTime)
         {
             Vector3 movement = CalculateMovement();

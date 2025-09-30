@@ -7,8 +7,6 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
     public class PlayerFallState : PlayerBaseState
     {
         private Vector3 momentum;
-        private float maxFallSpeed;
-        private readonly string landingSound = "Play_Dirt_Landing";
         public PlayerFallState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -18,7 +16,6 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
             _playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
             momentum = _playerStateMachine.CharacterController.velocity;
             momentum.y = 0;
-            maxFallSpeed = 0f;
         }
 
         public override void Tick(float deltaTime)
@@ -29,10 +26,12 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
             {
                 if (_playerStateMachine.InputManager.MoveInput.x == 0)
                 {
-                    AkUnitySoundEngine.PostEvent(landingSound, _playerStateMachine.gameObject);
-
+                    _playerStateMachine.ChangeState(new PlayerLandingState(_playerStateMachine, 0.7f));
                 }
-                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                else
+                {
+                    _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                }
             }
         }
 
