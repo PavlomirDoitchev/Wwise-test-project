@@ -33,7 +33,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Tick(float deltaTime)
         {
             //Vector2 moveInput = _playerStateMachine.InputManager.MovementInput();
-            bool wantsToJump = _playerStateMachine.InputManager.PlayerJumpInput();
+            bool wantsToJump = _playerStateMachine.InputManager.JumpInput();
 
             if (animationTimer >= currentClipLength * cancelWindowStart)
             {
@@ -60,7 +60,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             if (!queuedNextAttack && animationTimer >= currentClipLength * comboWindowStart)
             {
-                if (_playerStateMachine.InputManager.PlayerAttackInput() && !isLastAttack)
+                if (_playerStateMachine.InputManager.AttackInput() && !isLastAttack)
                 {
                     queuedNextAttack = true;
                     _playerStateMachine.ComboIndex++;

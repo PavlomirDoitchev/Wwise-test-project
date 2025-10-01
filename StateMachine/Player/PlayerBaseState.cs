@@ -37,7 +37,7 @@ namespace Assets.Scripts.StateMachine.Player
         }
 
         /// <summary>
-        /// Standard locomotion movement. Sets speed to .5 for walk, 1 for sprint.
+        /// Standard locomotion movement. Sets speed to .5 for running, 1 for sprint.
         /// </summary>
         protected void PlayerMove(float deltaTime)
         {

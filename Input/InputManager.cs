@@ -35,9 +35,10 @@ public class InputManager : MonoBehaviour
         return MoveInput;
     }
 
-    public bool PlayerJumpInput() => Input.GetKey(keyBindingsDict["Jump"][0]);
-    public bool PlayerAttackInput() => Input.GetKeyDown(keyBindingsDict["Attack"][0]);
-    public bool PlayerSprintInput() => Input.GetKey(keyBindingsDict["Sprint"][0]);
+    public bool JumpInput() => Input.GetKey(keyBindingsDict["Jump"][0]);
+    public bool AttackInput() => Input.GetKeyDown(keyBindingsDict["Attack"][0]);
+    public bool SprintInput() => Input.GetKey(keyBindingsDict["Sprint"][0]);
+    public bool DropDownAttackInput() => GetComboDown("DropAttack");
     //public bool PlayerDodgeInput() => Input.GetKeyDown(keyBindingsDict["Dodge"][0]);
     //public bool PlayerMountInput() => Input.GetKeyDown(keyBindingsDict["Mount"][0]);
     //public bool PlayerDismountInput() => Input.GetKeyDown(keyBindingsDict["Dismount"][0]);
@@ -47,7 +48,6 @@ public class InputManager : MonoBehaviour
     //public bool AbilityThreeInput() => Input.GetKeyDown(keyBindingsDict["AbilityThree"][0]);
     //public bool AbilityFourInput() => Input.GetKeyDown(keyBindingsDict["AbilityFour"][0]);
     //public bool AbilityFiveInput() => Input.GetKeyDown(keyBindingsDict["AbilityFive"][0]);
-    //public bool AbilitySixInput() => GetComboDown("AbilitySix");
 
     private bool GetComboDown(string action)
     {

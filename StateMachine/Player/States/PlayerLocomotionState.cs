@@ -21,9 +21,17 @@ namespace Assets.Scripts.StateMachine.Player.States
             PlayerMove(deltaTime);
             Fall();
             DoJump();
+            MeleeAttacks();
+        }
+        public override void Exit()
+        {
+
+        }
+        private void MeleeAttacks()
+        {
             Vector2 moveInput = _playerStateMachine.InputManager.MovementInput();
-            bool wantsToAttack = _playerStateMachine.InputManager.PlayerAttackInput();
-            bool isSprinting = _playerStateMachine.InputManager.PlayerSprintInput();
+            bool wantsToAttack = _playerStateMachine.InputManager.AttackInput();
+            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 
             if (wantsToAttack)
             {
@@ -39,10 +47,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                 }
             }
         }
-        public override void Exit()
-        {
-            
-        }
+
         private void Fall()
         {
             if (_playerStateMachine.CharacterController.velocity.y <= -10)
@@ -54,17 +59,10 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         private void DoJump()
         {
-            if (_playerStateMachine.InputManager.PlayerJumpInput() && _playerStateMachine.CharacterController.isGrounded)
+            if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
             {
                 AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
                 _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
-            }
-        }
-        private void DoAttack()
-        {
-            if (_playerStateMachine.InputManager.PlayerAttackInput())
-            {
-                _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
             }
         }
     }
