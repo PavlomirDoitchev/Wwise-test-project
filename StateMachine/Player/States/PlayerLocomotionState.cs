@@ -22,6 +22,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             Fall();
             DoJump();
             MeleeAttacks();
+            
         }
         public override void Exit()
         {

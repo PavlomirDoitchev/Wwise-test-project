@@ -43,12 +43,6 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             
         }
-        private void DoAttack()
-        {
-            if (_playerStateMachine.InputManager.AttackInput())
-            {
-                _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
-            }
-        }
+        
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.StateMachine.Player.States;
+using UnityEngine;
 
 namespace Assets.Scripts.StateMachine.Player
 {
@@ -42,7 +43,7 @@ namespace Assets.Scripts.StateMachine.Player
         protected void PlayerMove(float deltaTime)
         {
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
-            bool isSprinting = _playerStateMachine.InputManager.PlayerSprintInput();
+            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 
             float baseSpeed = 6f;
 
@@ -104,6 +105,25 @@ namespace Assets.Scripts.StateMachine.Player
             {
                 float yRotation = horizontalInput > 0 ? 90f : -90f;
                 _playerStateMachine.transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+            }
+        }
+
+        #endregion
+
+        #region State Methods
+        protected void DoAttack()
+        {
+            if (_playerStateMachine.InputManager.AttackInput())
+            {
+                _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
+            }
+        }
+
+        protected void DropAttack()
+        {
+            if (_playerStateMachine.InputManager.DropAttackInput())
+            {
+                _playerStateMachine.ChangeState(new PlayerDropAttackState(_playerStateMachine));
             }
         }
 
