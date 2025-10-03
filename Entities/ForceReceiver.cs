@@ -12,7 +12,6 @@ namespace Assets.Scripts.Entities
         [SerializeField] private float fallMultiplier = 2.5f;
         [SerializeField] private float inAirDrag = .05f;
         [SerializeField] private float maxFallSpeed = -100f;
-        [SerializeField] private NavMeshAgent agent;
         public float verticalVelocity;
         private Vector3 impact;
         private Vector3 dampingVelocity;
@@ -23,7 +22,7 @@ namespace Assets.Scripts.Entities
         }
         private void Update()
         {
-            if (verticalVelocity < 0f && playerStateMachine.IsSupported())
+            if (verticalVelocity < 0f && playerStateMachine.CharacterController.isGrounded)
             {
                 verticalVelocity = 0f;
             }

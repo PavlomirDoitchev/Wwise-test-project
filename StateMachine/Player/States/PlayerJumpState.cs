@@ -22,7 +22,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
              bool isSprinting = _playerStateMachine.InputManager.SprintInput();
             if (isSprinting && _playerStateMachine.InputManager.MoveInput.x != 0)
             {
-                float sprintBoost = _playerStateMachine.PlayerStats.BaseSpeed * 2f; 
+                float sprintBoost = _playerStateMachine.PlayerStats.BaseSpeed * 5f; 
                 _playerStateMachine.ForceReceiver.AddForce(new Vector3(_playerStateMachine.InputManager.MoveInput.x * sprintBoost, 0f, 0f));
             }
             //_playerStateMachine.ForceReceiver.Jump(_playerStateMachine.PlayerStats.JumpForce);

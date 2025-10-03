@@ -21,7 +21,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Tick(float deltaTime)
         {
-            if (_playerStateMachine.IsSupported()) 
+            if (_playerStateMachine.CharacterController.isGrounded) 
             {
                 //Change to landing
             }

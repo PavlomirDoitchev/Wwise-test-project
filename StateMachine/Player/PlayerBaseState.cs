@@ -122,10 +122,17 @@ namespace Assets.Scripts.StateMachine.Player
         #endregion
 
         #region State Methods
-      
+        /// <summary>
+        /// Checks if the player is grounded using CharacterController's isGrounded property.
+        /// </summary>
+        /// <returns></returns>
+        protected bool IsGrounded() 
+        {
+            return _playerStateMachine.CharacterController.isGrounded;
+        }      
         protected bool CheckGrounded()
         {
-            return _playerStateMachine.IsSupported();
+            return _playerStateMachine.CharacterController.isGrounded;
         }
         protected void HandleLanding()
         {
@@ -144,7 +151,7 @@ namespace Assets.Scripts.StateMachine.Player
         }
         protected void DoJump()
         {
-            if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.IsSupported())
+            if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
             {
                 AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
                 _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));

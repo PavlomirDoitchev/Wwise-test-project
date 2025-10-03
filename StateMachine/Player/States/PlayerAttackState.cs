@@ -40,7 +40,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                 if (/*moveInput != Vector2.zero ||*/ wantsToJump)
                 {
                     _playerStateMachine.ComboIndex = 0;
-                    if (wantsToJump && _playerStateMachine.IsSupported())
+                    if (wantsToJump && _playerStateMachine.CharacterController.isGrounded)
                     {
                         _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
                         return;

@@ -93,10 +93,10 @@ namespace Assets.Scripts.StateMachine.Player.States
                 _playerStateMachine.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
             {
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
-                return;
+                return;     
             }
 
-            if (CheckGrounded())
+            if (IsGrounded())
             {
                 HandleLanding();
             }

@@ -53,7 +53,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         private void Fall(float deltaTime)
         {
-            if (!CheckGrounded())
+            if (!IsGrounded())
             {
                 unsupportedTime += deltaTime;
 
