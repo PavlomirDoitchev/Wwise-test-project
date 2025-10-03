@@ -39,7 +39,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         {
             PlayerMoveAirborne(deltaTime);
 
-            DoAirborneAttack();
+            //DoAirborneAttack();
 
             if (CheckGrounded())
             {

@@ -7,7 +7,7 @@ namespace Assets.Scripts.StateMachine.Player.States
     public class PlayerLocomotionState : PlayerBaseState
     {
         private float unsupportedTime = 0f;
-        private float fallDelay = 1f; // seconds before counting as a fall
+        private float fallDelay = 1f;
         public PlayerLocomotionState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }

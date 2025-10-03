@@ -37,6 +37,7 @@ namespace Assets.Scripts.Entities
             impact = Vector3.SmoothDamp(impact, Vector3.zero, ref dampingVelocity, dragTime);
 
         }
+    
         public void AddForce(Vector3 force)
         {
             impact += force;
