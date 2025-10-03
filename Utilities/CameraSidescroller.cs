@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class CameraZoom : MonoBehaviour
+public class CameraSidescroller : MonoBehaviour
 {
     [Header("Focus")]
     [SerializeField] private Transform focus;
@@ -21,7 +21,7 @@ public class CameraZoom : MonoBehaviour
     [SerializeField] private float lookAheadSmooth = 5f;
 
     [Header("Tilt")]
-    [SerializeField] private float tiltX = 15f; 
+    [SerializeField] private float tiltX = 15f;
 
     private Camera cam;
     private float currentDistance;
@@ -55,19 +55,17 @@ public class CameraZoom : MonoBehaviour
         float halfWidth = deadZoneSize.x / 2f;
         float halfHeight = deadZoneSize.y / 2f;
 
-        bool outsideDeadZone = false;
+        Vector3 deadZoneOffset = Vector3.zero;
 
-        if (localFocus.x > halfWidth) { localFocus.x -= halfWidth; outsideDeadZone = true; }
-        else if (localFocus.x < -halfWidth) { localFocus.x += halfWidth; outsideDeadZone = true; }
-        else { localFocus.x = 0; }
+        if (localFocus.x > halfWidth) deadZoneOffset.x = localFocus.x - halfWidth;
+        else if (localFocus.x < -halfWidth) deadZoneOffset.x = localFocus.x + halfWidth;
 
-        if (localFocus.y > halfHeight) { localFocus.y -= halfHeight; outsideDeadZone = true; }
-        else if (localFocus.y < -halfHeight) { localFocus.y += halfHeight; outsideDeadZone = true; }
-        else { localFocus.y = 0; }
+        if (localFocus.y > halfHeight) deadZoneOffset.y = localFocus.y - halfHeight;
+        else if (localFocus.y < -halfHeight) deadZoneOffset.y = localFocus.y + halfHeight;
 
-        if (outsideDeadZone)
+        if (deadZoneOffset != Vector3.zero)
         {
-            Vector3 worldOffset = transform.TransformVector(localFocus);
+            Vector3 worldOffset = transform.TransformVector(deadZoneOffset);
             cameraTargetPos += new Vector3(worldOffset.x, worldOffset.y, 0f);
         }
 
@@ -78,7 +76,6 @@ public class CameraZoom : MonoBehaviour
         Vector3 posShake = ImpulseManager.GetPositionShake();
 
         transform.position = cameraTargetPos + posShake;
-
         transform.rotation = Quaternion.Euler(tiltX, 0f, 0f);
     }
 
