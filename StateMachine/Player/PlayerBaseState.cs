@@ -61,7 +61,7 @@ namespace Assets.Scripts.StateMachine.Player
                 locomotionValue = isSprinting ? 1f : 0.5f;
 
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.01f, deltaTime);
-            
+
         }
 
         /// <summary>
@@ -118,7 +118,15 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
             }
         }
-
+        protected bool AirborneAttack()
+        {
+            if (_playerStateMachine.InputManager.AttackInput())
+            {
+                _playerStateMachine.Animator.CrossFadeInFixedTime("Attack_Airborne", .1f);
+                return true;
+            }
+            return false;
+        }
         protected void DropAttack()
         {
             if (_playerStateMachine.InputManager.DropAttackInput())

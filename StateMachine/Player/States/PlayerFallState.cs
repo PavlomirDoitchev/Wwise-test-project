@@ -21,7 +21,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         public override void Tick(float deltaTime)
         {
             PlayerMove(deltaTime);
-
+            AirborneAttack();
             if (_playerStateMachine.CharacterController.isGrounded)
             {
                 if (_playerStateMachine.InputManager.MoveInput.x == 0)

@@ -20,6 +20,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         public override void Tick(float deltaTime)
         {
             PlayerMove(deltaTime);
+            AirborneAttack();
             if (_playerStateMachine.CharacterController.velocity.y <= 0)
             {
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
