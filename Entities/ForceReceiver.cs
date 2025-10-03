@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.StateMachine.Player;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Assets.Scripts.Entities
@@ -6,6 +7,7 @@ namespace Assets.Scripts.Entities
     public class ForceReceiver : MonoBehaviour
     {
         [SerializeField] private CharacterController characterController;
+        [SerializeField] private PlayerStateMachine playerStateMachine;
         [SerializeField] private float dragTime = 0.1f;
         [SerializeField] private float fallMultiplier = 2.5f;
         [SerializeField] private float inAirDrag = .05f;
@@ -15,9 +17,13 @@ namespace Assets.Scripts.Entities
         private Vector3 impact;
         private Vector3 dampingVelocity;
         public Vector3 Movement => impact + Vector3.up * verticalVelocity;
+        private void Awake()
+        {
+            playerStateMachine = GetComponent<PlayerStateMachine>();
+        }
         private void Update()
         {
-            if (verticalVelocity < 0f && characterController.isGrounded)
+            if (verticalVelocity < 0f && playerStateMachine.IsSupported())
             {
                 verticalVelocity = 0f;
             }

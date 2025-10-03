@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.StateMachine.Player.States;
+﻿using Assets.Scripts.State_Machine.Player_State_Machine;
+using Assets.Scripts.StateMachine.Player.States;
 using UnityEngine;
 
 namespace Assets.Scripts.StateMachine.Player
@@ -45,17 +46,15 @@ namespace Assets.Scripts.StateMachine.Player
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
             bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 
-            float baseSpeed = 6f;
+            float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
 
             float speedMultiplier = isSprinting ? 1.3f : 1f;
             Vector2 filteredInput = GetFilteredMovementInput();
             Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
 
-            // Move the character
             Move(movement, deltaTime);
             HandleFlip(filteredInput.x);
 
-            // Update animator locomotion
             float locomotionValue = 0f;
             if (filteredInput != Vector2.zero)
                 locomotionValue = isSprinting ? 1f : 0.5f;
@@ -63,7 +62,19 @@ namespace Assets.Scripts.StateMachine.Player
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.01f, deltaTime);
 
         }
+        protected void PlayerMoveAirborne(float deltaTime)
+        {
+            Vector2 input = _playerStateMachine.InputManager.MovementInput();
 
+            float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
+
+            Vector2 filteredInput = GetFilteredMovementInput();
+            Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed;
+
+            Move(movement, deltaTime);
+            HandleFlip(filteredInput.x);
+
+        }
         /// <summary>
         /// Movement used during attacks to preserve rotation/flip without modifying speed.
         /// </summary>
@@ -111,6 +122,34 @@ namespace Assets.Scripts.StateMachine.Player
         #endregion
 
         #region State Methods
+      
+        protected bool CheckGrounded()
+        {
+            return _playerStateMachine.IsSupported();
+        }
+        protected void HandleLanding()
+        {
+            if (_playerStateMachine.InputManager.MoveInput.x == 0)
+            {
+                _playerStateMachine.ChangeState(
+                    new PlayerLandingState(_playerStateMachine, 0.7f)
+                );
+            }
+            else
+            {
+                _playerStateMachine.ChangeState(
+                    new PlayerLocomotionState(_playerStateMachine)
+                );
+            }
+        }
+        protected void DoJump()
+        {
+            if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.IsSupported())
+            {
+                AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
+                _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
+            }
+        }
         protected void DoAttack()
         {
             if (_playerStateMachine.InputManager.AttackInput())
@@ -118,11 +157,11 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
             }
         }
-        protected bool AirborneAttack()
+        protected bool DoAirborneAttack()
         {
             if (_playerStateMachine.InputManager.AttackInput())
             {
-                _playerStateMachine.Animator.CrossFadeInFixedTime("Attack_Airborne", .1f);
+                _playerStateMachine.ChangeState(new PlayerAirborneAttackState(_playerStateMachine));
                 return true;
             }
             return false;

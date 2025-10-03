@@ -9,7 +9,8 @@ namespace Assets.Scripts.Entities
 {
     public class PlayerStats : MonoBehaviour
     {
-        [field:SerializeField] public float JumpForce { get; private set; }  
+        [field: SerializeField] public float JumpForce { get; private set; }
+        [field: SerializeField] public float BaseSpeed { get; private set; } = 7f;
         struct PlayerStat
         {
             public string Name;

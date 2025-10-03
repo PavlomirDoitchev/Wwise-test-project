@@ -9,7 +9,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         private float animationTimer = 0f;
         private float currentClipLength = 0f;
         private float crossfadeDuration = 0.05f;
-        private float forwardForce = 30f;
+        private float forwardForce = 40f;
 
         public PlayerSprintAttackState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 

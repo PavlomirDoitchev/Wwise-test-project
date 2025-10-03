@@ -6,6 +6,8 @@ namespace Assets.Scripts.StateMachine.Player.States
 {
     public class PlayerLocomotionState : PlayerBaseState
     {
+        private float unsupportedTime = 0f;
+        private float fallDelay = 1f; // seconds before counting as a fall
         public PlayerLocomotionState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -19,7 +21,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Tick(float deltaTime)
         {
             PlayerMove(deltaTime);
-            Fall();
+            Fall(deltaTime);
             DoJump();
             MeleeAttacks();
             
@@ -49,22 +51,25 @@ namespace Assets.Scripts.StateMachine.Player.States
             }
         }
 
-        private void Fall()
+        private void Fall(float deltaTime)
         {
-            if (_playerStateMachine.CharacterController.velocity.y <= -10)
+            if (!CheckGrounded())
             {
-                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
-                return;
+                unsupportedTime += deltaTime;
+
+                if (unsupportedTime >= fallDelay)
+                {
+                    Physics.IgnoreLayerCollision(_playerStateMachine.gameObject.layer, _playerStateMachine.groundMask, true);
+                    _playerStateMachine.ForceReceiver.verticalVelocity = -2f;
+                    _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
+                }
+            }
+            else
+            {
+                unsupportedTime = 0f;
             }
         }
 
-        private void DoJump()
-        {
-            if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
-            {
-                AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
-                _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
-            }
-        }
+
     }
 }

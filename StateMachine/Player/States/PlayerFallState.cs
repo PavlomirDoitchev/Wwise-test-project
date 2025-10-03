@@ -1,43 +1,55 @@
 ﻿using Assets.Scripts.StateMachine.Player;
 using Assets.Scripts.StateMachine.Player.States;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.State_Machine.Player_State_Machine
 {
     public class PlayerFallState : PlayerBaseState
     {
-        private Vector3 momentum;
-        public PlayerFallState(PlayerStateMachine stateMachine) : base(stateMachine)
-        {
-        }
+        
+        public PlayerFallState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
         public override void Enter()
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
-            momentum = _playerStateMachine.CharacterController.velocity;
-            momentum.y = 0;
+
+            _playerStateMachine.ForceReceiver.verticalVelocity = -2f;
+
+            Collider groundCollider = null;
+            foreach (var probe in _playerStateMachine.groundProbes)
+            {
+                if (Physics.Raycast(probe.position, Vector3.down, out RaycastHit hit, _playerStateMachine.probeDistance + 0.2f, _playerStateMachine.groundMask))
+                {
+                    groundCollider = hit.collider;
+                    break;
+                }
+            }
+
+            if (groundCollider != null)
+            {
+                _playerStateMachine.currentGroundCollider = groundCollider;
+                Physics.IgnoreCollision(_playerStateMachine.CharacterController, groundCollider, true);
+
+                _playerStateMachine.CharacterController.Move(Vector3.up * 0.05f);
+            }
         }
 
         public override void Tick(float deltaTime)
         {
-            PlayerMove(deltaTime);
-            AirborneAttack();
-            if (_playerStateMachine.CharacterController.isGrounded)
+            PlayerMoveAirborne(deltaTime);
+
+            DoAirborneAttack();
+
+            if (CheckGrounded())
             {
-                if (_playerStateMachine.InputManager.MoveInput.x == 0)
-                {
-                    _playerStateMachine.ChangeState(new PlayerLandingState(_playerStateMachine, 0.7f));
-                }
-                else
-                {
-                    _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
-                }
+                Physics.IgnoreLayerCollision(_playerStateMachine.gameObject.layer, _playerStateMachine.groundMask, false);
+                HandleLanding();
             }
         }
 
-        public override void Exit()
-        {
-        }
+        public override void Exit() { }
 
+        
     }
 }

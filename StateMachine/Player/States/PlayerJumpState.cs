@@ -19,10 +19,11 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         }
         public override void Tick(float deltaTime)
         {
-            PlayerMove(deltaTime);
-            AirborneAttack();
+            PlayerMoveAirborne(deltaTime);
+            DoAirborneAttack();
             if (_playerStateMachine.CharacterController.velocity.y <= 0)
             {
+                _playerStateMachine.ForceReceiver.ResetForces();
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
                 return;
             }

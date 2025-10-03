@@ -15,7 +15,7 @@ namespace Assets.Scripts.Entities
         public void PlayFootstep()
         {
             if (_playerStateMachine.InputManager.MovementInput().sqrMagnitude > 0.5f &&
-                _playerStateMachine.CharacterController.isGrounded)
+                _playerStateMachine.IsSupported())
             {
                 AkUnitySoundEngine.PostEvent(footstepEventName, gameObject);
             }

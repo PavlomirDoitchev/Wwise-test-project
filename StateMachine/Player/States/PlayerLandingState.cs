@@ -30,6 +30,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             {
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             }
+            DoJump();
             PlayerMove(deltaTime);
             DoAttack();
             timer += deltaTime;
