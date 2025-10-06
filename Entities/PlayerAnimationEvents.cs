@@ -14,11 +14,12 @@ namespace Assets.Scripts.Entities
 
         public void PlayFootstep()
         {
-            if (_playerStateMachine.InputManager.MovementInput().sqrMagnitude > 0.5f &&
+            if (_playerStateMachine.InputManager.MovementInput().sqrMagnitude >= 0.5f &&
                 _playerStateMachine.CharacterController.isGrounded)
             {
                 AkUnitySoundEngine.PostEvent(footstepEventName, gameObject);
             }
+            //AkUnitySoundEngine.PostEvent(footstepEventName, gameObject);
         }
     }
 }

@@ -7,7 +7,6 @@ namespace Assets.Scripts.Entities
     public class ForceReceiver : MonoBehaviour
     {
         [SerializeField] private CharacterController characterController;
-        [SerializeField] private PlayerStateMachine playerStateMachine;
         [SerializeField] private float dragTime = 0.1f;
         [SerializeField] private float fallMultiplier = 2.5f;
         [SerializeField] private float inAirDrag = .05f;
@@ -18,11 +17,13 @@ namespace Assets.Scripts.Entities
         public Vector3 Movement => impact + Vector3.up * verticalVelocity;
         private void Awake()
         {
-            playerStateMachine = GetComponent<PlayerStateMachine>();
+
+            verticalVelocity = 0f;
+            impact = Vector3.zero;
         }
         private void Update()
         {
-            if (verticalVelocity < 0f && playerStateMachine.CharacterController.isGrounded)
+            if (verticalVelocity < 0f && characterController.isGrounded)
             {
                 verticalVelocity = 0f;
             }
@@ -32,6 +33,8 @@ namespace Assets.Scripts.Entities
                 verticalVelocity *= (1 - inAirDrag);
                 verticalVelocity = Mathf.Max(verticalVelocity, maxFallSpeed);
             }
+
+          
 
             impact = Vector3.SmoothDamp(impact, Vector3.zero, ref dampingVelocity, dragTime);
 
@@ -47,6 +50,7 @@ namespace Assets.Scripts.Entities
         }
         public void Jump(float jumpForce)
         {
+            verticalVelocity = Mathf.Max(verticalVelocity, 0f);
             verticalVelocity += jumpForce;
         }
         public void KnockUp(float force)

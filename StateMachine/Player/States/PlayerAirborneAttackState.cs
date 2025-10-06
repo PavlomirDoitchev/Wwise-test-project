@@ -82,7 +82,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             elapsedTime += deltaTime;
 
-            _playerStateMachine.ForceReceiver.verticalVelocity = 0f;
+            //_playerStateMachine.ForceReceiver.verticalVelocity = -3f;
             _playerStateMachine.ForceReceiver.AddForce(Vector3.up * upwardForce * deltaTime);
 
             Move(deltaTime);
