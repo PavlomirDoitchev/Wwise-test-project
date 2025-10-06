@@ -64,14 +64,42 @@ namespace Assets.Scripts.StateMachine.Player
         }
         protected void PlayerMoveAirborne(float deltaTime)
         {
+            //Vector2 input = _playerStateMachine.InputManager.MovementInput();
+
+            //float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
+
+            //Vector2 filteredInput = GetFilteredMovementInput();
+            //Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed;
+
+            //Move(movement, deltaTime);
+            //HandleFlip(filteredInput.x);
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
+            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 
             float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
+            float maxSpeed = isSprinting ? baseSpeed * 1.3f : baseSpeed;
+            float acceleration = _playerStateMachine.PlayerStats.AirAcceleration; 
 
             Vector2 filteredInput = GetFilteredMovementInput();
-            Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed;
+            Vector3 moveDir = new Vector3(filteredInput.x, 0f, 0f).normalized;
 
-            Move(movement, deltaTime);
+            Vector3 currentVelocity = new Vector3(
+                _playerStateMachine.ForceReceiver.Movement.x,
+                0f,
+                0f
+            );
+
+            Vector3 targetVelocity = moveDir * maxSpeed;
+
+            Vector3 newVelocity = Vector3.MoveTowards(
+                currentVelocity,
+                targetVelocity,
+                acceleration * deltaTime
+            );
+
+            _playerStateMachine.ForceReceiver.SetForce(new Vector3(newVelocity.x, 0f, 0f));
+
+            Move(newVelocity, deltaTime);
             HandleFlip(filteredInput.x);
 
         }

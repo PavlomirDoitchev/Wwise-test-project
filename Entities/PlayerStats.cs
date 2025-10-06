@@ -11,6 +11,8 @@ namespace Assets.Scripts.Entities
     {
         [field: SerializeField] public float JumpForce { get; private set; }
         [field: SerializeField] public float BaseSpeed { get; private set; } = 7f;
+        [field: SerializeField] public float AirAcceleration { get; private set; } = 50f;
+        [field: SerializeField] public float AirDeceleration { get; private set; } = 20f;
         struct PlayerStat
         {
             public string Name;

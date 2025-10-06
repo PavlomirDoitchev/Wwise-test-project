@@ -63,5 +63,9 @@ namespace Assets.Scripts.Entities
             verticalVelocity = 0f;
             dampingVelocity = Vector3.zero;
         }
+        public void ResetVertical() 
+        {
+            verticalVelocity = 0f;
+        }
     }
 }
