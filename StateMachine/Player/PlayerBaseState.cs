@@ -131,6 +131,12 @@ namespace Assets.Scripts.StateMachine.Player
 
             return input;
         }
+        protected Vector3 GetHorizontalMomentum()
+        {
+            Vector3 velocity = _playerStateMachine.CharacterController.velocity;
+            velocity.y = 0f;
+            return velocity;
+        }
         #endregion
 
         #region Rotation
@@ -182,7 +188,14 @@ namespace Assets.Scripts.StateMachine.Player
             if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
             {
                 AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
-                _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
+
+                Vector3 momentum = new Vector3(
+                    _playerStateMachine.CharacterController.velocity.x,
+                    0f,
+                    0f
+                );
+
+                _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine, momentum));
             }
         }
         protected void DoAttack()
@@ -196,7 +209,8 @@ namespace Assets.Scripts.StateMachine.Player
         {
             if (_playerStateMachine.InputManager.AttackInput())
             {
-                _playerStateMachine.ChangeState(new PlayerAirborneAttackState(_playerStateMachine));
+                Vector3 currentMomentum = GetHorizontalMomentum();
+                _playerStateMachine.ChangeState(new PlayerAirborneAttackState(_playerStateMachine, currentMomentum));
                 return true;
             }
             return false;

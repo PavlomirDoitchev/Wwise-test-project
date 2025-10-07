@@ -59,9 +59,11 @@ namespace Assets.Scripts.StateMachine.Player.States
 
                 if (unsupportedTime >= fallDelay)
                 {
+                    Vector3 currentMomentum = GetHorizontalMomentum();
+
                     Physics.IgnoreLayerCollision(_playerStateMachine.gameObject.layer, _playerStateMachine.groundMask, true);
                     _playerStateMachine.ForceReceiver.verticalVelocity = -2f;
-                    _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine));
+                    _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, currentMomentum));
                 }
             }
             else
