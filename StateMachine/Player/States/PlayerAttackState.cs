@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.State_Machine.Player_State_Machine;
 using Assets.Scripts.StateMachine.Player;
 using UnityEngine;
+using UnityEngine.Windows;
 
 namespace Assets.Scripts.StateMachine.Player.States
 {
@@ -40,6 +41,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                 if (/*moveInput != Vector2.zero ||*/ wantsToJump)
                 {
                     _playerStateMachine.ComboIndex = 0;
+                    //_playerStateMachine.InputManager.ConsumeJump();
                     if (wantsToJump && _playerStateMachine.CharacterController.isGrounded)
                     {
                         _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));

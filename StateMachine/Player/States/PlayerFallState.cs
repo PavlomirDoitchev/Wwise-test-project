@@ -7,7 +7,6 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
     public class PlayerFallState : PlayerBaseState
     {
         private Vector3 _momentum;
-
         public PlayerFallState(PlayerStateMachine stateMachine, Vector3 momentum) : base(stateMachine)
         {
             _momentum = momentum;

@@ -5,10 +5,13 @@ namespace Assets.Scripts.StateMachine.Player.States
 {
     public class PlayerLandingState : PlayerBaseState
     {
-        private readonly string landingSound = "Play_Dirt_Landing";
+        private readonly string landingEvent = "Play_Landing";
         private readonly int LandingAnimation = Animator.StringToHash("Land");
-        float timer = 0f;
-        float landingDuration;
+
+        private float timer = 0f;
+        private readonly float landingDuration;
+        private string _currentSurface = "Dirt"; 
+        private readonly LayerMask groundMask = ~0; 
 
         public PlayerLandingState(PlayerStateMachine stateMachine, float time) : base(stateMachine)
         {
@@ -18,32 +21,46 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Enter()
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime(LandingAnimation, 0.1f);
-            if (_playerStateMachine.InputManager.MoveInput.x == 0)
-            {
-                AkUnitySoundEngine.PostEvent(landingSound, _playerStateMachine.gameObject);
 
-            }
+            UpdateSurface();
+
+            AkUnitySoundEngine.SetSwitch("Landing_Material", _currentSurface, _playerStateMachine.gameObject);
+            AkUnitySoundEngine.PostEvent(landingEvent, _playerStateMachine.gameObject);
         }
+
         public override void Tick(float deltaTime)
         {
-            if (_playerStateMachine.InputManager.MoveInput.x != 0) 
-            {
-                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
-            }
-            DoJump();
-            PlayerMove(deltaTime);
-            DoAttack();
-            timer += deltaTime;
-            if (timer >= landingDuration)
+            if (_playerStateMachine.InputManager.MoveInput.x != 0)
             {
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
                 return;
             }
+
+            DoJump();
+            PlayerMove(deltaTime);
+            DoAttack();
+
+            timer += deltaTime;
+            if (timer >= landingDuration)
+            {
+                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+            }
         }
-        public override void Exit()
+
+        public override void Exit() { }
+
+        private void UpdateSurface()
         {
-            
+            if (Physics.Raycast(_playerStateMachine.transform.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 1.5f, groundMask))
+            {
+                // Detect by tag or custom component
+                if (hit.collider.CompareTag("Stone"))
+                    _currentSurface = "Stone";
+                else if (hit.collider.CompareTag("Dirt"))
+                    _currentSurface = "Dirt";
+                else
+                    _currentSurface = "Dirt";
+            }
         }
-        
     }
 }

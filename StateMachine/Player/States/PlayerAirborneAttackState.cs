@@ -26,7 +26,9 @@ namespace Assets.Scripts.StateMachine.Player.States
             attackDuration = _playerStateMachine.Animator.GetCurrentAnimatorStateInfo(0).length;
             elapsedTime = 0f;
 
-            _playerStateMachine.ForceReceiver.ResetVertical();
+            //_playerStateMachine.ForceReceiver.ResetVertical();
+            //_playerStateMachine.ForceReceiver.SetForce(new Vector3(horizontalMomentum.x, 0f, 0f));
+            _playerStateMachine.ForceReceiver.SetForce(horizontalMomentum);
 
             _playerStateMachine.ForceReceiver.Jump(upwardKick * 4);
         }
@@ -35,26 +37,21 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             elapsedTime += deltaTime;
 
-            // Time since attack started
             float normalizedTime = _playerStateMachine.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
-            // Hang phase: slow gravity for the first bit
             if (elapsedTime <= hangTime)
             {
-                // Lessen gravity’s effect to “float” a little
                 _playerStateMachine.ForceReceiver.verticalVelocity +=
                     Physics.gravity.y * hangGravityMultiplier * deltaTime;
             }
             else
             {
-                // Resume normal falling
                 _playerStateMachine.ForceReceiver.verticalVelocity +=
                     Physics.gravity.y * 5 * deltaTime;
             }
 
             Move(deltaTime);
 
-            // Exit conditions
             if (elapsedTime >= attackDuration || normalizedTime >= 1f)
             {
                 Vector3 currentMomentum = GetHorizontalMomentum();
@@ -70,7 +67,6 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Exit()
         {
-            // Reset extra forces for clean fall or landing
             _playerStateMachine.ForceReceiver.ResetVertical();
         }
     }

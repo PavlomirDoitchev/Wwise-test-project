@@ -125,7 +125,6 @@ namespace Assets.Scripts.StateMachine.Player
         {
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
 
-            // Only block if the blocker still exists
             if (_playerStateMachine.currentLeftBlocker != null && input.x < 0) input.x = 0f;
             if (_playerStateMachine.currentRightBlocker != null && input.x > 0) input.x = 0f;
 
@@ -133,7 +132,8 @@ namespace Assets.Scripts.StateMachine.Player
         }
         protected Vector3 GetHorizontalMomentum()
         {
-            Vector3 velocity = _playerStateMachine.CharacterController.velocity;
+            //Vector3 velocity = _playerStateMachine.CharacterController.velocity;
+            Vector3 velocity = _playerStateMachine.ForceReceiver.Movement;
             velocity.y = 0f;
             return velocity;
         }
@@ -185,8 +185,14 @@ namespace Assets.Scripts.StateMachine.Player
         }
         protected void DoJump()
         {
-            if (_playerStateMachine.InputManager.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
+            var input = _playerStateMachine.InputManager;
+
+            if (input.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
             {
+                string surface = DetectSurface();
+
+                AkUnitySoundEngine.SetSwitch("Jumping_Material", surface, _playerStateMachine.gameObject);
+
                 AkUnitySoundEngine.PostEvent("Play_Jump", _playerStateMachine.gameObject);
 
                 Vector3 momentum = new Vector3(
@@ -224,5 +230,21 @@ namespace Assets.Scripts.StateMachine.Player
         }
 
         #endregion
+        private string DetectSurface()
+        {
+            RaycastHit hit;
+            // Slight offset to ensure we hit the ground collider
+            if (Physics.Raycast(_playerStateMachine.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 1.5f))
+            {
+                if (hit.collider.CompareTag("Stone"))
+                    return "Stone";
+                else if (hit.collider.CompareTag("Dirt"))
+                    return "Dirt";
+            }
+
+            return "Dirt"; // Default fallback
+        }
+
     }
+
 }
