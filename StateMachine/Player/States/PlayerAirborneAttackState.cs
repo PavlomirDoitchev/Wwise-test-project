@@ -75,16 +75,17 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             _playerStateMachine.ForceReceiver.ResetForces();
 
-            _playerStateMachine.ForceReceiver.SetForce(_playerStateMachine.transform.forward * 25);
+            //_playerStateMachine.ForceReceiver.SetForce(_playerStateMachine.transform.forward * 25);
         }
 
         public override void Tick(float deltaTime)
         {
             elapsedTime += deltaTime;
 
-            //_playerStateMachine.ForceReceiver.verticalVelocity = -3f;
-            _playerStateMachine.ForceReceiver.AddForce(Vector3.up * upwardForce * deltaTime);
-
+            _playerStateMachine.ForceReceiver.verticalVelocity = 0f;
+            //_playerStateMachine.ForceReceiver.AddForce(Vector3.up * upwardForce * deltaTime);
+            if(_playerStateMachine.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= .3f)
+                _playerStateMachine.ForceReceiver.verticalVelocity -= upwardForce * deltaTime;
             Move(deltaTime);
 
             //HandleFlip(_playerStateMachine.transform.forward.x);

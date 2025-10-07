@@ -21,7 +21,7 @@ namespace Assets.Scripts.Entities
             verticalVelocity = 0f;
             impact = Vector3.zero;
         }
-        private void Update()
+        private void FixedUpdate()
         {
             if (verticalVelocity < 0f && characterController.isGrounded)
             {
