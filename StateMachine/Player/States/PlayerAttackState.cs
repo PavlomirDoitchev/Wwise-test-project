@@ -14,7 +14,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         private float currentClipLength = 0f;
         private float comboWindowStart = 0.7f; 
         private float crossfadeDuration = 0.05f;
-        private float attackForwardForce = 25f;
+        private float attackForwardForce = 20f;
         private float cancelWindowStart = 0.1f;
 
         public PlayerAttackState(PlayerStateMachine stateMachine) : base(stateMachine) 

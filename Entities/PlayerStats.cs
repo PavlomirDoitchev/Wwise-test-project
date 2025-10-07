@@ -13,27 +13,72 @@ namespace Assets.Scripts.Entities
         [field: SerializeField] public float BaseSpeed { get; private set; } = 7f;
         [field: SerializeField] public float AirAcceleration { get; private set; } = 50f;
         [field: SerializeField] public float AirDeceleration { get; private set; } = 20f;
-        struct PlayerStat
-        {
-            public string Name;
-            public float Value;
-            public float MaxValue;
+        [field: SerializeField] public int PlayerHealth { get; set; } = 100;
 
-            public PlayerStat(string name, float value, float maxValue)
-            {
-                Name = name;
-                Value = value;
-                MaxValue = maxValue;
-            }
-        }
-        private PlayerStat health;
-        private PlayerStat stamina;
-        private PlayerStat mana;
+
         private void Start()
         {
-            health = new PlayerStat("Health", 100, 100);
-            stamina = new PlayerStat("Stamina", 100, 100);
-            mana = new PlayerStat("Mana", 100, 100);
+            AkUnitySoundEngine.PostEvent("Play_Heartbeat", gameObject);
+
+            AkUnitySoundEngine.SetRTPCValue("PlayerHealth", PlayerHealth, gameObject);
         }
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                TakeDamage(21);
+            }
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                Heal(21);
+            }
+        }
+        private void UpdateHeartbeatRTPC()
+        {
+            AkUnitySoundEngine.SetRTPCValue("PlayerHealth", PlayerHealth, gameObject);
+        }
+        public void TakeDamage(int damageAmount)
+        {
+            PlayerHealth -= damageAmount;
+            UpdateHeartbeatRTPC();
+            Die();
+        }
+        public void Heal(int healAmount)
+        {
+            PlayerHealth += healAmount;
+            UpdateHeartbeatRTPC();
+            if (PlayerHealth > 100)
+                PlayerHealth = 100;
+        }
+        private void Die()
+        {
+            if (PlayerHealth <= 0)
+            {
+                Debug.Log("Player Died");
+                // Add death logic here (e.g., respawn, game over screen, etc.)
+            }
+        }
+        //struct PlayerStat
+        //{
+        //    public string Name;
+        //    public float Value;
+        //    public float MaxValue;
+
+        //    public PlayerStat(string name, float value, float maxValue)
+        //    {
+        //        Name = name;
+        //        Value = value;
+        //        MaxValue = maxValue;
+        //    }
+        //}
+        //private PlayerStat health;
+        //private PlayerStat stamina;
+        //private PlayerStat mana;
+        //private void Start()
+        //{
+        //    health = new PlayerStat("Health", 100, 100);
+        //    stamina = new PlayerStat("Stamina", 100, 100);
+        //    mana = new PlayerStat("Mana", 100, 100);
+        //}
     }
 }
