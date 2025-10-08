@@ -18,6 +18,7 @@ namespace Assets.Scripts.Entities
 
         private void Start()
         {
+            AkUnitySoundEngine.SetState("PlayerLife", "Alive");
             AkUnitySoundEngine.PostEvent("Play_Heartbeat", gameObject);
 
             AkUnitySoundEngine.SetRTPCValue("PlayerHealth", PlayerHealth, gameObject);
@@ -54,6 +55,7 @@ namespace Assets.Scripts.Entities
         {
             if (PlayerHealth <= 0)
             {
+                AkUnitySoundEngine.SetState("PlayerLife", "Dead");
                 Debug.Log("Player Died");
                 // Add death logic here (e.g., respawn, game over screen, etc.)
             }
