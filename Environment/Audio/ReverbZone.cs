@@ -10,6 +10,12 @@ public class ReverbZone : MonoBehaviour
 
     private float currentValue;
     private float targetValue;
+    private void Start()
+    {
+        currentValue = outsideValue;
+        targetValue = outsideValue;
+        AkUnitySoundEngine.SetRTPCValue(rtpcName, currentValue);
+    }
 
     private void OnTriggerEnter(Collider other) 
     { 
