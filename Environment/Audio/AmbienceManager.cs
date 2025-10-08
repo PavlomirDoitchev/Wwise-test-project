@@ -10,7 +10,14 @@ namespace Assets.Scripts.Environment.Audio
         private void Start()
         {
             AkUnitySoundEngine.PostEvent(ambienceEvent, gameObject);
-            AkUnitySoundEngine.PostEvent(ambienceMusicEvent, gameObject);
+        }
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                AkUnitySoundEngine.PostEvent(ambienceMusicEvent, gameObject);
+
+            }
         }
         //private void OnDestroy()
         //{
