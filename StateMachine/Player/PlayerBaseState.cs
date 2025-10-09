@@ -54,10 +54,7 @@ namespace Assets.Scripts.StateMachine.Player
 
             Move(movement, deltaTime);
             HandleFlip(filteredInput.x);
-            if (filteredInput == Vector2.zero && isSprinting) 
-            {
-                _playerStateMachine.ChangeState(new PlayerStoppingState(_playerStateMachine));
-            }
+            
             float locomotionValue = 0f;
            
             if (filteredInput != Vector2.zero)
@@ -248,7 +245,7 @@ namespace Assets.Scripts.StateMachine.Player
 
             return "Dirt"; // Default fallback
         }
-
+        public virtual void OnControllerColliderHit(ControllerColliderHit hit) { }
     }
 
 }

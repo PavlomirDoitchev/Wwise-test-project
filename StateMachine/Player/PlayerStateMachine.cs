@@ -11,7 +11,6 @@ namespace Assets.Scripts.StateMachine.Player
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public InputManager InputManager { get; private set; }
         [field: SerializeField] public PlayerStats PlayerStats { get; private set; }
-        public Vector2 PreviousInput { get; set; }
         public Cooldown ComboCooldown { get; private set; }
         [SerializeField] float comboTimeout = 2f;
         public int ComboIndex { get; set; } = 0;
@@ -51,6 +50,11 @@ namespace Assets.Scripts.StateMachine.Player
         }
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
+            if (CurrentState is PlayerBaseState playerState)
+            {
+                playerState.OnControllerColliderHit(hit);
+            }
+
             if (hit.gameObject.TryGetComponent<IPushable>(out _)) return;
 
             if (hit.gameObject.TryGetComponent<INotPushable>(out INotPushable notPushable))
