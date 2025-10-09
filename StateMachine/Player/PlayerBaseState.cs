@@ -54,8 +54,12 @@ namespace Assets.Scripts.StateMachine.Player
 
             Move(movement, deltaTime);
             HandleFlip(filteredInput.x);
-
+            if (filteredInput == Vector2.zero && isSprinting) 
+            {
+                _playerStateMachine.ChangeState(new PlayerStoppingState(_playerStateMachine));
+            }
             float locomotionValue = 0f;
+           
             if (filteredInput != Vector2.zero)
                 locomotionValue = isSprinting ? 1f : 0.5f;
 
@@ -64,15 +68,7 @@ namespace Assets.Scripts.StateMachine.Player
         }
         protected void PlayerMoveAirborne(float deltaTime)
         {
-            //Vector2 input = _playerStateMachine.InputManager.MovementInput();
-
-            //float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
-
-            //Vector2 filteredInput = GetFilteredMovementInput();
-            //Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed;
-
-            //Move(movement, deltaTime);
-            //HandleFlip(filteredInput.x);
+           
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
             bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 

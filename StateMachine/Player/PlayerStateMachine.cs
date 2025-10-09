@@ -11,6 +11,7 @@ namespace Assets.Scripts.StateMachine.Player
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public InputManager InputManager { get; private set; }
         [field: SerializeField] public PlayerStats PlayerStats { get; private set; }
+        public Vector2 PreviousInput { get; set; }
         public Cooldown ComboCooldown { get; private set; }
         [SerializeField] float comboTimeout = 2f;
         public int ComboIndex { get; set; } = 0;
