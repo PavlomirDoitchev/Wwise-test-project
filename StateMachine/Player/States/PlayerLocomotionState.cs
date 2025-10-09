@@ -52,24 +52,31 @@ namespace Assets.Scripts.StateMachine.Player.States
             }
         }
 
-        private void Fall(float deltaTime)
+        //private void Fall(float deltaTime)
+        //{
+        //    if (!IsGrounded() || _playerStateMachine.CharacterController.velocity.y <= -10f)
+        //    {
+        //        unsupportedTime += deltaTime;
+
+        //        if (unsupportedTime >= fallDelay)
+        //        {
+        //            Vector3 currentMomentum = GetHorizontalMomentum();
+
+        //            Physics.IgnoreLayerCollision(_playerStateMachine.gameObject.layer, _playerStateMachine.groundMask, true);
+        //            _playerStateMachine.ForceReceiver.verticalVelocity = -2f;
+        //            _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, currentMomentum));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        unsupportedTime = 0f;
+        //    }
+        //}
+        private void Fall(float deltaTime) 
         {
-            if (!IsGrounded())
+            if (_playerStateMachine.CharacterController.velocity.y <= -10f)
             {
-                unsupportedTime += deltaTime;
-
-                if (unsupportedTime >= fallDelay)
-                {
-                    Vector3 currentMomentum = GetHorizontalMomentum();
-
-                    Physics.IgnoreLayerCollision(_playerStateMachine.gameObject.layer, _playerStateMachine.groundMask, true);
-                    _playerStateMachine.ForceReceiver.verticalVelocity = -2f;
-                    _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, currentMomentum));
-                }
-            }
-            else
-            {
-                unsupportedTime = 0f;
+                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, GetHorizontalMomentum()));
             }
         }
 

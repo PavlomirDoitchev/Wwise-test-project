@@ -10,12 +10,14 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         public PlayerFallState(PlayerStateMachine stateMachine, Vector3 momentum) : base(stateMachine)
         {
             _momentum = momentum;
+
         }
 
         public override void Enter()
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
             _playerStateMachine.ForceReceiver.SetForce(_momentum);
+            Debug.Log("Enter Fall State");
         }
 
         public override void Tick(float deltaTime)
