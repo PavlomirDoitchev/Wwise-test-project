@@ -183,6 +183,14 @@ namespace Assets.Scripts.StateMachine.Player
                 );
             }
         }
+        protected void DoDash() 
+        {
+            var input = _playerStateMachine.InputManager;
+            if (input.DashInput()) 
+            {
+                _playerStateMachine.ChangeState(new PlayerDashState(_playerStateMachine, 0.2f));
+            }
+        }
         protected void DoJump()
         {
             var input = _playerStateMachine.InputManager;

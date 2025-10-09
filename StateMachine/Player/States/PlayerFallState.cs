@@ -21,7 +21,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         public override void Tick(float deltaTime)
         {
             PlayerMoveAirborne(deltaTime);
-
+            DoDash();
             if (IsGrounded())
             {
                 HandleLanding();

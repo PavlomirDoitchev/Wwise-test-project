@@ -34,7 +34,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         {
             PlayerMoveAirborne(deltaTime);
             DoAirborneAttack();
-
+            DoDash();
             if (isJumping && _playerStateMachine.InputManager.JumpInput() && jumpTime < maxJumpTime)
             {
                 float jumpForcePerFrame = _playerStateMachine.PlayerStats.JumpForce * deltaTime / maxJumpTime;

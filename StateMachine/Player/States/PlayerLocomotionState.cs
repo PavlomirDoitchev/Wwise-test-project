@@ -24,12 +24,13 @@ namespace Assets.Scripts.StateMachine.Player.States
             Fall(deltaTime);
             DoJump();
             MeleeAttacks();
-            
+            DoDash();
         }
         public override void Exit()
         {
 
         }
+        
         private void MeleeAttacks()
         {
             Vector2 moveInput = _playerStateMachine.InputManager.MovementInput();

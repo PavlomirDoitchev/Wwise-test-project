@@ -14,7 +14,7 @@ namespace Assets.Scripts.Entities
         [field: SerializeField] public float AirAcceleration { get; private set; } = 50f;
         [field: SerializeField] public float AirDeceleration { get; private set; } = 20f;
         [field: SerializeField] public int PlayerHealth { get; set; } = 100;
-
+        [field: SerializeField] public float DashForce { get; private set; } = 20f;
 
         private void Start()
         {

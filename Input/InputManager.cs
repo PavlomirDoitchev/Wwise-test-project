@@ -19,11 +19,7 @@ public class InputManager : MonoBehaviour
 
         LoadKeyBindings();
     }
-    //private void Update()
-    //{
 
-
-    //}
 
     public Vector2 MovementInput()
     {
@@ -37,22 +33,7 @@ public class InputManager : MonoBehaviour
         return MoveInput;
     }
 
-    //public bool JumpInput()
-    //{
-    //    bool isHeld = Input.GetKey(keyBindingsDict["Jump"][0]);
-
-    //    if (!isHeld)
-    //        jumpReleasedSinceLastJump = true;
-
-    //    jumpHeldLastFrame = isHeld;
-
-    //    return isHeld && jumpReleasedSinceLastJump;
-    //}
-
-    //public void ConsumeJump()
-    //{
-    //    jumpReleasedSinceLastJump = false;
-    //}
+    
     public bool JumpInput() => Input.GetKey(keyBindingsDict["Jump"][0]);
     public bool AttackInput() => Input.GetKeyDown(keyBindingsDict["Attack"][0]);
     public bool SprintInput() => Input.GetKey(keyBindingsDict["Sprint"][0]);
