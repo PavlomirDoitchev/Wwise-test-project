@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Camera))]
 public class CameraSidescroller : MonoBehaviour
@@ -74,9 +75,10 @@ public class CameraSidescroller : MonoBehaviour
         cameraTargetPos = Vector3.Lerp(cameraTargetPos, desiredPos, cameraFollowSpeed * Time.deltaTime);
 
         Vector3 posShake = ImpulseManager.GetPositionShake();
+        //Vector3 rotShake = ImpulseManager.GetRotationShake();   
 
         transform.position = cameraTargetPos + posShake;
-        transform.rotation = Quaternion.Euler(tiltX, 0f, 0f);
+        //transform.rotation =  * Quaternion.Euler(rotShake);
     }
 
     private void HandleZoom()
