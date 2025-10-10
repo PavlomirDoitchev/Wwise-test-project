@@ -6,6 +6,7 @@ namespace Assets.Scripts.StateMachine.Player
 {
     public class PlayerStateMachine : StateMachine
     {
+       
         [field: SerializeField] public CharacterController CharacterController { get; private set; }
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
@@ -66,6 +67,7 @@ namespace Assets.Scripts.StateMachine.Player
                 }
             }
         }
+
         public bool IsSupported()
         {
             int hits = 0;

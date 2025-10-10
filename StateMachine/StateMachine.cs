@@ -10,7 +10,7 @@ namespace Assets.Scripts.StateMachine
         private State currentState;
         private State previousState;
         public State PreviousState => previousState;
-        protected State CurrentState => currentState;
+        public State CurrentState => currentState;
 
         /// <summary>
         /// Change the current state to a new state.

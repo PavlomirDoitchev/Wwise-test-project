@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Assets.Scripts.StateMachine.Player;
+using Assets.Scripts.StateMachine.Player.States;
 
 namespace Assets.Scripts.Entities
 {
@@ -29,7 +30,7 @@ namespace Assets.Scripts.Entities
         {
             UpdateSurface();
 
-            if (!_playerStateMachine.CharacterController.isGrounded)
+            if (!_playerStateMachine.CharacterController.isGrounded || _playerStateMachine.CurrentState is not PlayerLocomotionState)
                 return;
 
             Vector3 currentPosition = transform.position;
