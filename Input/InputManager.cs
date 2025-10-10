@@ -40,7 +40,7 @@ public class InputManager : MonoBehaviour
     public bool DropAttackInput() => GetComboDown("DropAttack");
     public bool DashInput() => Input.GetKeyDown(keyBindingsDict["Dash"][0]);
     public bool SlideInput() => GetComboDown("Slide");
-
+    public bool DropPlatform() => GetComboDown("DropPlatform");
 
     private bool GetComboDown(string action)
     {

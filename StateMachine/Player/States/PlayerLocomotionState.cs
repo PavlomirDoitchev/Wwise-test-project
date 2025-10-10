@@ -32,26 +32,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         }
         
-        private void MeleeAttacks()
-        {
-            Vector2 moveInput = _playerStateMachine.InputManager.MovementInput();
-            bool wantsToAttack = _playerStateMachine.InputManager.AttackInput();
-            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
-
-            if (wantsToAttack)
-            {
-                if (isSprinting && moveInput != Vector2.zero)
-                {
-                    _playerStateMachine.ChangeState(new PlayerSprintAttackState(_playerStateMachine));
-                    return;
-                }
-                else
-                {
-                    _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
-                    return;
-                }
-            }
-        }
+        
 
         //private void Fall(float deltaTime)
         //{
@@ -73,13 +54,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         //        unsupportedTime = 0f;
         //    }
         //}
-        private void Fall(float deltaTime) 
-        {
-            if (_playerStateMachine.CharacterController.velocity.y <= -10f)
-            {
-                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, GetHorizontalMomentum()));
-            }
-        }
+        
 
         
 

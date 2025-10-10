@@ -20,6 +20,8 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Enter()
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("Slide", .1f);
+            _playerStateMachine.CharacterController.height = .5f;
+            _playerStateMachine.CharacterController.center = new Vector3(0f, 0.25f, 0f);
             _playerStateMachine.ForceReceiver
                 .SetForce(_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
         }
@@ -40,6 +42,9 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Exit()
         {
+            _playerStateMachine.CharacterController.center = new Vector3(0f, 1f, 0f);
+            _playerStateMachine.CharacterController.height = 2f;
+
             _playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
         }
         public override void OnControllerColliderHit(ControllerColliderHit hit)

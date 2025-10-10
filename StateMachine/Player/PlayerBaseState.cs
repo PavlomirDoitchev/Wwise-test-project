@@ -220,6 +220,26 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
             }
         }
+        protected void MeleeAttacks()
+        {
+            Vector2 moveInput = _playerStateMachine.InputManager.MovementInput();
+            bool wantsToAttack = _playerStateMachine.InputManager.AttackInput();
+            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
+
+            if (wantsToAttack)
+            {
+                if (isSprinting && moveInput != Vector2.zero)
+                {
+                    _playerStateMachine.ChangeState(new PlayerSprintAttackState(_playerStateMachine));
+                    return;
+                }
+                else
+                {
+                    _playerStateMachine.ChangeState(new PlayerAttackState(_playerStateMachine));
+                    return;
+                }
+            }
+        }
         protected bool DoAirborneAttack()
         {
             if (_playerStateMachine.InputManager.AttackInput())
@@ -237,12 +257,17 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.ChangeState(new PlayerDropAttackState(_playerStateMachine));
             }
         }
-
+        protected void Fall(float deltaTime)
+        {
+            if (_playerStateMachine.CharacterController.velocity.y <= -10f)
+            {
+                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, GetHorizontalMomentum()));
+            }
+        }
         #endregion
         private string DetectSurface()
         {
             RaycastHit hit;
-            // Slight offset to ensure we hit the ground collider
             if (Physics.Raycast(_playerStateMachine.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 1.5f))
             {
                 if (hit.collider.CompareTag("Stone"))
