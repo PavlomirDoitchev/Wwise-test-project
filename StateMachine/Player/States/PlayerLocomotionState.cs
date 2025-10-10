@@ -25,6 +25,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoJump();
             MeleeAttacks();
             DoDash();
+            DoSlide();
         }
         public override void Exit()
         {
@@ -80,6 +81,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             }
         }
 
+        
 
     }
 }

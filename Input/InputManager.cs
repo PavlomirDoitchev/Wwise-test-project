@@ -39,6 +39,7 @@ public class InputManager : MonoBehaviour
     public bool SprintInput() => Input.GetKey(keyBindingsDict["Sprint"][0]);
     public bool DropAttackInput() => GetComboDown("DropAttack");
     public bool DashInput() => Input.GetKeyDown(keyBindingsDict["Dash"][0]);
+    public bool SlideInput() => GetComboDown("Slide");
 
 
     private bool GetComboDown(string action)

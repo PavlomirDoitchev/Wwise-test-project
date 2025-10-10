@@ -6,8 +6,8 @@ using UnityEngine;
 public class PlayerDashState : PlayerBaseState
 {
     private float duration;
-    private float lastGroundedTime;
-    private const float groundedBuffer = 0.15f; 
+    //private float lastGroundedTime;
+    //private const float groundedBuffer = 0.15f; 
 
     public PlayerDashState(PlayerStateMachine stateMachine, float duration) : base(stateMachine)
     {
@@ -16,23 +16,23 @@ public class PlayerDashState : PlayerBaseState
 
     public override void Enter()
     {
-        if (_playerStateMachine.CharacterController.isGrounded)
-            lastGroundedTime = Time.time;
+        //if (_playerStateMachine.CharacterController.isGrounded)
+        //    lastGroundedTime = Time.time;
 
-        bool groundedBuffered = Time.time - lastGroundedTime <= groundedBuffer;
+        //bool groundedBuffered = Time.time - lastGroundedTime <= groundedBuffer;
 
-        if (groundedBuffered)
-            _playerStateMachine.Animator.CrossFadeInFixedTime("Slide", 0.1f);
-        else
-            _playerStateMachine.Animator.CrossFadeInFixedTime("Dash", 0.1f);
-        _playerStateMachine.ForceReceiver.SetForce(
-            _playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
+        //if (groundedBuffered)
+        //    _playerStateMachine.Animator.CrossFadeInFixedTime("Slide", 0.1f);
+        //else
+        _playerStateMachine.Animator.CrossFadeInFixedTime("Dash", 0.1f);
+        _playerStateMachine.ForceReceiver
+            .SetForce(_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
     }
 
     public override void Tick(float deltaTime)
     {
-        if (_playerStateMachine.CharacterController.isGrounded)
-            lastGroundedTime = Time.time;
+        //if (_playerStateMachine.CharacterController.isGrounded)
+        //    lastGroundedTime = Time.time;
         _playerStateMachine.ForceReceiver.verticalVelocity = 0f;
 
         duration -= deltaTime;
@@ -50,7 +50,6 @@ public class PlayerDashState : PlayerBaseState
         _playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
     }
 
-    // Collider logic unchanged
     public override void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.gameObject.TryGetComponent<IPushable>(out _)) return;
