@@ -1,10 +1,5 @@
 ﻿using Assets.Scripts.State_Machine.Player_State_Machine;
 using Assets.Scripts.Utilities.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.StateMachine.Player.States
@@ -30,14 +25,28 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Tick(float deltaTime)
         {
             if (_playerStateMachine.CharacterController.velocity.y < -10f)
-                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, GetHorizontalMomentum()));
-            _duration -= deltaTime;
-            if(_duration <= 0f)
             {
-                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, GetHorizontalMomentum()));
                 return;
             }
-            Move(deltaTime);
+
+            _duration -= deltaTime;
+
+            // Check if we can exit slide
+            if (_duration <= 0f)
+            {
+                if (CanStandUp())
+                {
+                    _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                    return;
+                }
+                else
+                {
+                    _duration = 0.1f;
+                }
+            }
+
+            ApplySlideMovement(deltaTime);
         }
 
         public override void Exit()
@@ -61,6 +70,23 @@ namespace Assets.Scripts.StateMachine.Player.States
                     _playerStateMachine.ChangeState(new PlayerCollisionState(_playerStateMachine, 0.2f));
                 }
             }
+        }
+        private bool CanStandUp()
+        {
+            var cc = _playerStateMachine.CharacterController;
+            Vector3 start = _playerStateMachine.transform.position + Vector3.up * (cc.radius);
+            Vector3 end = start + Vector3.up * (2f - cc.height);
+
+            return !Physics.CheckCapsule(start, end, cc.radius,
+                _playerStateMachine.groundMask); 
+        }
+        private void ApplySlideMovement(float deltaTime)
+        {
+            Vector3 slideDir = _playerStateMachine.transform.forward;
+
+            _playerStateMachine.ForceReceiver.AddForce(slideDir * _playerStateMachine.PlayerStats.DashForce * deltaTime);
+
+            Move(deltaTime);
         }
     }
 }
