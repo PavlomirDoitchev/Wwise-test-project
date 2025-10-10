@@ -32,7 +32,6 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             _duration -= deltaTime;
 
-            // Check if we can exit slide
             if (_duration <= 0f)
             {
                 if (CanStandUp())

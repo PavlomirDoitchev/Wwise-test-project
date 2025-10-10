@@ -24,7 +24,9 @@ namespace Assets.Scripts.StateMachine.Player
         public Transform[] groundProbes;
         public Collider currentGroundCollider = null;
 
-
+        [SerializeField] private float blockerCheckHeight = 1.8f;
+        [SerializeField] private int blockerCheckRays = 3;
+        [SerializeField] private float blockerCheckDistance = 0.6f;
         private void Awake()
         {
             ComboCooldown = new Cooldown(comboTimeout);
@@ -33,22 +35,46 @@ namespace Assets.Scripts.StateMachine.Player
         {
             ChangeState(new PlayerLocomotionState(this));
         }
+        
         private void FixedUpdate()
         {
             if (currentLeftBlocker != null)
             {
-                Vector3 origin = transform.position + Vector3.up * 0.5f;
-                if (!Physics.Raycast(origin, Vector3.left, 0.6f))
+                bool stillBlocked = false;
+                for (int i = 0; i < blockerCheckRays; i++)
+                {
+                    float t = i / (float)(blockerCheckRays - 1);
+                    Vector3 origin = transform.position + Vector3.up * (t * blockerCheckHeight);
+                    if (Physics.Raycast(origin, Vector3.left, blockerCheckDistance))
+                    {
+                        stillBlocked = true;
+                        break;
+                    }
+                }
+
+                if (!stillBlocked)
                     currentLeftBlocker = null;
             }
 
             if (currentRightBlocker != null)
             {
-                Vector3 origin = transform.position + Vector3.up * 0.5f;
-                if (!Physics.Raycast(origin, Vector3.right, 0.6f))
+                bool stillBlocked = false;
+                for (int i = 0; i < blockerCheckRays; i++)
+                {
+                    float t = i / (float)(blockerCheckRays - 1);
+                    Vector3 origin = transform.position + Vector3.up * (t * blockerCheckHeight);
+                    if (Physics.Raycast(origin, Vector3.right, blockerCheckDistance))
+                    {
+                        stillBlocked = true;
+                        break;
+                    }
+                }
+
+                if (!stillBlocked)
                     currentRightBlocker = null;
             }
         }
+
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (CurrentState is PlayerBaseState playerState)
