@@ -7,12 +7,17 @@ namespace Assets.Scripts.StateMachine.Player.States
     public class PlayerWallSlideState : PlayerBaseState
     {
         private const float slideSpeed = -3.5f;
-        private const float jumpHorizontalForce = 5f;
+        private const float jumpHorizontalForce = 25f;
 
         public PlayerWallSlideState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
         public override void Enter()
         {
+            if (_playerStateMachine.GetWallContact() == PlayerStateMachine.WallSide.Left)
+                _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.left);
+            else
+                _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.right);
+
             _playerStateMachine.Animator.CrossFadeInFixedTime("WallJump_Loop", 0.1f);
             _playerStateMachine.ForceReceiver.ResetForces();
         }
@@ -20,27 +25,41 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Tick(float deltaTime)
         {
             var wallSide = _playerStateMachine.GetWallContact();
-
+            DoWallDash();
             _playerStateMachine.ForceReceiver.verticalVelocity = Mathf.Max(_playerStateMachine.ForceReceiver.verticalVelocity, slideSpeed);
 
             if (_playerStateMachine.InputManager.JumpInput())
             {
                 Vector3 jumpDir = Vector3.up;
                 if (wallSide == PlayerStateMachine.WallSide.Left)
-                    jumpDir += Vector3.right;
+                    jumpDir += Vector3.right * 1.2f; 
                 else if (wallSide == PlayerStateMachine.WallSide.Right)
-                    jumpDir += Vector3.left;
+                    jumpDir += Vector3.left * 1.2f;
 
                 jumpDir.Normalize();
 
                 _playerStateMachine.ForceReceiver.ResetForces();
-                _playerStateMachine.ForceReceiver.JumpTo(_playerStateMachine.PlayerStats.JumpForce, jumpDir * jumpHorizontalForce);
+                _playerStateMachine.ForceReceiver.JumpTo(
+                    _playerStateMachine.PlayerStats.JumpForce * 0.1f,
+                    jumpDir * jumpHorizontalForce * 0.7f 
+                );
 
-                _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine));
+                if (wallSide == PlayerStateMachine.WallSide.Left)
+                    _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.right);
+                else
+                    _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.left);
+
+                _playerStateMachine.ChangeState(new PlayerWallJumpState(_playerStateMachine, jumpDir * jumpHorizontalForce));
                 return;
             }
 
-            if (!_playerStateMachine.IsTouchingWall || _playerStateMachine.CharacterController.isGrounded)
+            bool validWall = false;
+            if (wallSide == PlayerStateMachine.WallSide.Left)
+                validWall = _playerStateMachine.IsFullyTouchingWall(Vector3.left);
+            else if (wallSide == PlayerStateMachine.WallSide.Right)
+                validWall = _playerStateMachine.IsFullyTouchingWall(Vector3.right);
+
+            if (!validWall || _playerStateMachine.CharacterController.isGrounded)
             {
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
                 return;

@@ -8,12 +8,17 @@ public class PlayerDashState : PlayerBaseState
     private float duration;
     //private float lastGroundedTime;
     //private const float groundedBuffer = 0.15f; 
+    private bool shouldGoInOppositeDir;
 
     public PlayerDashState(PlayerStateMachine stateMachine, float duration) : base(stateMachine)
     {
         this.duration = duration;
     }
-
+    public PlayerDashState(PlayerStateMachine stateMachine, float duration, bool direction) : base(stateMachine)
+    {
+        this.duration = duration;
+        this.shouldGoInOppositeDir = direction;
+    }
     public override void Enter()
     {
         //if (_playerStateMachine.CharacterController.isGrounded)
@@ -25,8 +30,16 @@ public class PlayerDashState : PlayerBaseState
         //    _playerStateMachine.Animator.CrossFadeInFixedTime("Slide", 0.1f);
         //else
         _playerStateMachine.Animator.CrossFadeInFixedTime("Dash", 0.1f);
-        _playerStateMachine.ForceReceiver
-            .SetForce(_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
+        if (shouldGoInOppositeDir)
+        {
+            _playerStateMachine.ForceReceiver.SetForce(-_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
+            _playerStateMachine.transform.rotation = Quaternion.LookRotation(-_playerStateMachine.transform.forward);
+        }
+        else
+        {
+            _playerStateMachine.ForceReceiver
+                .SetForce(_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
+        }
     }
 
     public override void Tick(float deltaTime)

@@ -63,6 +63,11 @@ namespace Assets.Scripts.StateMachine.Player
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.01f, deltaTime);
 
         }
+        protected void PlayerMoveAirborne(float deltaTime, Vector3 scaledInput)
+        {
+            Vector3 move = scaledInput * 2;
+            Move((move + _playerStateMachine.ForceReceiver.Movement) * deltaTime, deltaTime);
+        }
         protected void PlayerMoveAirborne(float deltaTime)
         {
            
@@ -182,6 +187,14 @@ namespace Assets.Scripts.StateMachine.Player
             if (input.DashInput()) 
             {
                 _playerStateMachine.ChangeState(new PlayerDashState(_playerStateMachine, 0.2f));
+            }
+        }
+        protected void DoWallDash() 
+        {
+            var input = _playerStateMachine.InputManager;
+            if (input.DashInput())
+            {
+                _playerStateMachine.ChangeState(new PlayerDashState(_playerStateMachine, 0.2f, true));
             }
         }
         protected void DoSlide() 

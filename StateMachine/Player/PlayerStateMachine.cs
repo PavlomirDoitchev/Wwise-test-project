@@ -28,6 +28,13 @@ namespace Assets.Scripts.StateMachine.Player
         [SerializeField] private int blockerCheckRays = 3;
         [SerializeField] private float blockerCheckDistance = 0.6f;
 
+        [SerializeField] private float wallCheckHeight = 1.8f;
+        [SerializeField] private int wallCheckRays = 4;
+        [SerializeField] private float wallCheckDistance = 0.6f;
+        [SerializeField] private LayerMask wallMask;
+
+       
+
         public enum WallSide
         {
             None,
@@ -119,6 +126,19 @@ namespace Assets.Scripts.StateMachine.Player
                     hits++;
             }
             return hits >= minProbesRequired;
+        }
+        public bool IsFullyTouchingWall(Vector3 direction)
+        {
+            int hits = 0;
+            for (int i = 0; i < wallCheckRays; i++)
+            {
+                float t = i / (float)(wallCheckRays - 1);
+                Vector3 origin = transform.position + Vector3.up * (t * wallCheckHeight);
+                if (Physics.Raycast(origin, direction, wallCheckDistance, wallMask))
+                    hits++;
+            }
+
+            return hits >= wallCheckRays * 0.6f;
         }
         private void OnDrawGizmos()
         {
