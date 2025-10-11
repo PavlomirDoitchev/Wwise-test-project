@@ -17,13 +17,16 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
             _playerStateMachine.ForceReceiver.SetForce(_momentum);
-            Debug.Log("Enter Fall State");
         }
 
         public override void Tick(float deltaTime)
         {
             PlayerMoveAirborne(deltaTime);
             DoDash();
+            if (_playerStateMachine.IsTouchingWall) 
+            {
+                _playerStateMachine.ChangeState(new PlayerWallSlideState(_playerStateMachine));
+            }
             if (IsGrounded())
             {
                 HandleLanding();

@@ -27,6 +27,14 @@ namespace Assets.Scripts.StateMachine.Player
         [SerializeField] private float blockerCheckHeight = 1.8f;
         [SerializeField] private int blockerCheckRays = 3;
         [SerializeField] private float blockerCheckDistance = 0.6f;
+
+        public enum WallSide
+        {
+            None,
+            Left,
+            Right
+        }
+
         private void Awake()
         {
             ComboCooldown = new Cooldown(comboTimeout);
@@ -93,7 +101,15 @@ namespace Assets.Scripts.StateMachine.Player
                 }
             }
         }
-
+        public bool IsTouchingWall => GetWallContact() != WallSide.None;
+        public WallSide GetWallContact()
+        {
+            if (currentLeftBlocker != null)
+                return WallSide.Left;
+            if (currentRightBlocker != null)
+                return WallSide.Right;
+            return WallSide.None;
+        }
         public bool IsSupported()
         {
             int hits = 0;
