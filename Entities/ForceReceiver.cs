@@ -53,6 +53,12 @@ namespace Assets.Scripts.Entities
             verticalVelocity = Mathf.Max(verticalVelocity, 0f);
             verticalVelocity += jumpForce;
         }
+        public void JumpTo(float jumpForce, Vector3 jumpDirection)
+        {
+            verticalVelocity = Mathf.Max(verticalVelocity, 0f);
+            impact += jumpDirection;
+            verticalVelocity += jumpForce;
+        }
         public void KnockUp(float force)
         {
             verticalVelocity = force;

@@ -15,7 +15,8 @@ public class PlayerCollisionState : PlayerBaseState
     public override void Enter()
     {
         _playerStateMachine.Animator.CrossFadeInFixedTime("Collision", 0.1f);
-        _playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
+        _playerStateMachine.ForceReceiver.AddForce(_playerStateMachine.gameObject.transform.forward * -10f);
+        //_playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
         ImpulseManager.GenerateImpulse(new Vector3(0.1f, 0.1f, 0f), new Vector3(1f, 1f, 0f), 0.2f);
     }
 
