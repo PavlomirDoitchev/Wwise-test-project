@@ -11,21 +11,22 @@ namespace Assets.Scripts.Entities
         [SerializeField] private float fallMultiplier = 2.5f;
         [SerializeField] private float inAirDrag = .05f;
         [SerializeField] private float maxFallSpeed = -100f;
+
         public float verticalVelocity;
         private Vector3 impact;
         private Vector3 dampingVelocity;
-        public Vector3 Movement => impact + Vector3.up * verticalVelocity;
-        private void Awake()
-        {
 
-            verticalVelocity = 0f;
-            impact = Vector3.zero;
-        }
+        private float wallSlideTimer = 0f;
+        private const float wallSlideRampDuration = 2f;
+
+        public Vector3 Movement => impact + Vector3.up * verticalVelocity;
+
         private void FixedUpdate()
         {
             if (verticalVelocity < 0f && characterController.isGrounded)
             {
                 verticalVelocity = 0f;
+                wallSlideTimer = 0f; 
             }
             else
             {
@@ -34,12 +35,33 @@ namespace Assets.Scripts.Entities
                 verticalVelocity = Mathf.Max(verticalVelocity, maxFallSpeed);
             }
 
-          
-
             impact = Vector3.SmoothDamp(impact, Vector3.zero, ref dampingVelocity, dragTime);
-
         }
-    
+
+        public void ApplyWallSlideGravity(float slideMultiplier = 0.85f, float maxSlideSpeed = -12f)
+        {
+            wallSlideTimer += Time.deltaTime;
+            float rampFactor = Mathf.Clamp01(wallSlideTimer / wallSlideRampDuration);
+
+            verticalVelocity += Physics.gravity.y * fallMultiplier * slideMultiplier * rampFactor * Time.deltaTime;
+
+            verticalVelocity = Mathf.Max(verticalVelocity, maxSlideSpeed);
+        }
+
+        public void ResetForces()
+        {
+            impact = Vector3.zero;
+            verticalVelocity = 0f;
+            dampingVelocity = Vector3.zero;
+            wallSlideTimer = 0f;
+        }
+
+        public void ResetVertical()
+        {
+            verticalVelocity = 0f;
+            wallSlideTimer = 0f;
+        }
+
         public void AddForce(Vector3 force)
         {
             impact += force;
@@ -67,15 +89,6 @@ namespace Assets.Scripts.Entities
         {
             verticalVelocity = -force;
         }
-        public void ResetForces()
-        {
-            impact = Vector3.zero;
-            verticalVelocity = 0f;
-            dampingVelocity = Vector3.zero;
-        }
-        public void ResetVertical() 
-        {
-            verticalVelocity = 0f;
-        }
+        
     }
 }

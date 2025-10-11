@@ -6,7 +6,6 @@ namespace Assets.Scripts.StateMachine.Player.States
 {
     public class PlayerWallSlideState : PlayerBaseState
     {
-        private const float slideSpeed = -3.5f;
         private const float jumpHorizontalForce = 25f;
 
         public PlayerWallSlideState(PlayerStateMachine stateMachine) : base(stateMachine) { }
@@ -19,15 +18,13 @@ namespace Assets.Scripts.StateMachine.Player.States
                 _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.right);
 
             _playerStateMachine.Animator.CrossFadeInFixedTime("WallJump_Loop", 0.1f);
-            _playerStateMachine.ForceReceiver.ResetForces();
         }
 
         public override void Tick(float deltaTime)
         {
             var wallSide = _playerStateMachine.GetWallContact();
             DoWallDash();
-            _playerStateMachine.ForceReceiver.verticalVelocity = Mathf.Max(_playerStateMachine.ForceReceiver.verticalVelocity, slideSpeed);
-
+            _playerStateMachine.ForceReceiver.ApplyWallSlideGravity(.85f, -20f);
             if (_playerStateMachine.InputManager.JumpInput())
             {
                 Vector3 jumpDir = Vector3.up;
