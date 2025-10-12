@@ -58,7 +58,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             if (!validWall || _playerStateMachine.CharacterController.isGrounded)
             {
-                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
                 return;
             }
 

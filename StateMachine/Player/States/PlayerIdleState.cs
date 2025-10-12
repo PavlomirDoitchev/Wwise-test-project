@@ -17,7 +17,8 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             if (input.x != 0)
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
-
+            Move(deltaTime);
+            //Fall(deltaTime);
             DoJump();
             MeleeAttacks();
             DoDash();
