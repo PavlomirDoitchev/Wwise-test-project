@@ -24,7 +24,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             var wallSide = _playerStateMachine.GetWallContact();
             DoWallDash();
-            _playerStateMachine.ForceReceiver.ApplyWallSlideGravity(.85f, -20f);
+            _playerStateMachine.ForceReceiver.ApplyWallSlideGravity(.85f, -12f);
             if (_playerStateMachine.InputManager.JumpInput())
             {
                 Vector3 jumpDir = Vector3.up;

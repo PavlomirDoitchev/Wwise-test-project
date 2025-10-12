@@ -47,21 +47,26 @@ namespace Assets.Scripts.StateMachine.Player
             bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 
             float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
-
             float speedMultiplier = isSprinting ? 1.3f : 1f;
-            Vector2 filteredInput = GetFilteredMovementInput();
-            Vector3 movement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
 
-            Move(movement, deltaTime);
+            Vector2 filteredInput = GetFilteredMovementInput();
+            Vector3 targetMovement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
+
+            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; 
+            _playerStateMachine.CurrentVelocity = Vector3.MoveTowards(
+                _playerStateMachine.CurrentVelocity,
+                targetMovement,
+                acceleration * deltaTime
+            );
+
+            Move(_playerStateMachine.CurrentVelocity, deltaTime);
             HandleFlip(filteredInput.x);
-            
+
             float locomotionValue = 0f;
-           
             if (filteredInput != Vector2.zero)
                 locomotionValue = isSprinting ? 1f : 0.5f;
 
-            _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.01f, deltaTime);
-
+            _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.05f, deltaTime);
         }
         protected void PlayerMoveAirborne(float deltaTime, Vector3 scaledInput)
         {

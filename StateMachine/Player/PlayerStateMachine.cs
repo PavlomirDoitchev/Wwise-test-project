@@ -17,12 +17,12 @@ namespace Assets.Scripts.StateMachine.Player
         public int ComboIndex { get; set; } = 0;
         public INotPushable currentLeftBlocker = null;
         public INotPushable currentRightBlocker = null;
-
         public LayerMask groundMask;
         public float probeDistance = 0.1f;
         [SerializeField] private int minProbesRequired = 2;
         public Transform[] groundProbes;
         public Collider currentGroundCollider = null;
+        public Vector3 CurrentVelocity { get; set; } = Vector3.zero;
 
         [SerializeField] private float blockerCheckHeight = 1.8f;
         [SerializeField] private int blockerCheckRays = 3;
