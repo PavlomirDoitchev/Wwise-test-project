@@ -32,7 +32,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             if (_playerStateMachine.InputManager.MoveInput.x != 0)
             {
-                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
                 return;
             }
 
@@ -43,7 +43,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             timer += deltaTime;
             if (timer >= landingDuration)
             {
-                _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
             }
         }
 

@@ -13,6 +13,7 @@ namespace Assets.Scripts.StateMachine.Player
         protected PlayerStateMachine _playerStateMachine;
         protected float _lastInputX = 0f;
         protected bool _isTurning = false;
+        protected bool _isSprinting = false;
         public PlayerBaseState(PlayerStateMachine stateMachine)
         {
             _playerStateMachine = stateMachine;
@@ -46,16 +47,16 @@ namespace Assets.Scripts.StateMachine.Player
         protected void PlayerMove(float deltaTime)
         {
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
-            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
+            _isSprinting = _playerStateMachine.InputManager.SprintInput();
 
             float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
-            float speedMultiplier = isSprinting ? 1.3f : 1f;
+            float speedMultiplier = _isSprinting ? 1.3f : 1f;
 
             Vector2 filteredInput = GetFilteredMovementInput();
             Vector3 targetMovement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
 
             // Smooth current movement towards targetMovement
-            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; // add this to your stats
+            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; 
             _playerStateMachine.CurrentVelocity = Vector3.MoveTowards(
                 _playerStateMachine.CurrentVelocity,
                 targetMovement,
@@ -67,7 +68,7 @@ namespace Assets.Scripts.StateMachine.Player
 
             float locomotionValue = 0f;
             if (filteredInput != Vector2.zero)
-                locomotionValue = isSprinting ? 1f : 0.5f;
+                locomotionValue = _isSprinting ? 1f : 0.5f;
 
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.05f, deltaTime);
         }
