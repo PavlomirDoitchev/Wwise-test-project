@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.State_Machine.Player_State_Machine;
 using Assets.Scripts.StateMachine.Player.States;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.StateMachine.Player
@@ -10,7 +11,8 @@ namespace Assets.Scripts.StateMachine.Player
     public abstract class PlayerBaseState : State
     {
         protected PlayerStateMachine _playerStateMachine;
-
+        protected float _lastInputX = 0f;
+        protected bool _isTurning = false;
         public PlayerBaseState(PlayerStateMachine stateMachine)
         {
             _playerStateMachine = stateMachine;
@@ -52,7 +54,8 @@ namespace Assets.Scripts.StateMachine.Player
             Vector2 filteredInput = GetFilteredMovementInput();
             Vector3 targetMovement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
 
-            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; 
+            // Smooth current movement towards targetMovement
+            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; // add this to your stats
             _playerStateMachine.CurrentVelocity = Vector3.MoveTowards(
                 _playerStateMachine.CurrentVelocity,
                 targetMovement,
@@ -68,6 +71,8 @@ namespace Assets.Scripts.StateMachine.Player
 
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.05f, deltaTime);
         }
+
+
         protected void PlayerMoveAirborne(float deltaTime, Vector3 scaledInput)
         {
             Vector3 move = scaledInput * 2;
@@ -75,13 +80,13 @@ namespace Assets.Scripts.StateMachine.Player
         }
         protected void PlayerMoveAirborne(float deltaTime)
         {
-           
+
             Vector2 input = _playerStateMachine.InputManager.MovementInput();
             bool isSprinting = _playerStateMachine.InputManager.SprintInput();
 
             float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
             float maxSpeed = isSprinting ? baseSpeed * 1.3f : baseSpeed;
-            float acceleration = _playerStateMachine.PlayerStats.AirAcceleration; 
+            float acceleration = _playerStateMachine.PlayerStats.AirAcceleration;
 
             Vector2 filteredInput = GetFilteredMovementInput();
             Vector3 moveDir = new Vector3(filteredInput.x, 0f, 0f).normalized;
@@ -155,7 +160,6 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
             }
         }
-
         #endregion
 
         #region State Methods
@@ -163,10 +167,10 @@ namespace Assets.Scripts.StateMachine.Player
         /// Checks if the player is grounded using CharacterController's isGrounded property.
         /// </summary>
         /// <returns></returns>
-        protected bool IsGrounded() 
+        protected bool IsGrounded()
         {
             return _playerStateMachine.CharacterController.isGrounded;
-        }      
+        }
         protected bool CheckGrounded()
         {
             return _playerStateMachine.CharacterController.isGrounded;
@@ -186,15 +190,15 @@ namespace Assets.Scripts.StateMachine.Player
                 );
             }
         }
-        protected void DoDash() 
+        protected void DoDash()
         {
             var input = _playerStateMachine.InputManager;
-            if (input.DashInput()) 
+            if (input.DashInput())
             {
                 _playerStateMachine.ChangeState(new PlayerDashState(_playerStateMachine, 0.2f));
             }
         }
-        protected void DoWallDash() 
+        protected void DoWallDash()
         {
             var input = _playerStateMachine.InputManager;
             if (input.DashInput())
@@ -202,10 +206,10 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.ChangeState(new PlayerDashState(_playerStateMachine, 0.2f, true));
             }
         }
-        protected void DoSlide() 
+        protected void DoSlide()
         {
             var input = _playerStateMachine.InputManager;
-            if (input.SlideInput()) 
+            if (input.SlideInput())
             {
                 _playerStateMachine.ChangeState(new PlayerSlideState(_playerStateMachine, 0.2f));
             }
