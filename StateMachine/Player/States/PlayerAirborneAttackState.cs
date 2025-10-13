@@ -21,7 +21,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         public PlayerAirborneAttackState(PlayerStateMachine stateMachine) : base(stateMachine) { }
         public override void Enter()
         {
-            _playerStateMachine.Animator.CrossFadeInFixedTime("Attack_Airborne", 0.1f);
+            _playerStateMachine.Animator.CrossFadeInFixedTime("DualBlades_JumpAttack1", 0.1f);
 
             attackDuration = _playerStateMachine.Animator.GetCurrentAnimatorStateInfo(0).length;
             elapsedTime = 0f;
