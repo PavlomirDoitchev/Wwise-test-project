@@ -10,7 +10,7 @@ namespace Assets.Scripts.StateMachine.Player.States
     {
         private float _animationDuration;
 
-        public PlayerRunEndState(PlayerStateMachine stateMachine, float animationDuration = 0.4f)
+        public PlayerRunEndState(PlayerStateMachine stateMachine, float animationDuration = 0.3f)
             : base(stateMachine)
         {
             _animationDuration = animationDuration;
@@ -18,8 +18,8 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            _playerStateMachine.Animator.Play("DualBlades_RunEnd");
-            //_playerStateMachine.Animator.CrossFadeInFixedTime("DualBlades_RunEnd", 0.2f);
+            //_playerStateMachine.Animator.Play("RunEnd");
+            _playerStateMachine.Animator.CrossFadeInFixedTime("DualBlades_RunEnd", 0.4f);
         }
 
         public override void Tick(float deltaTime)

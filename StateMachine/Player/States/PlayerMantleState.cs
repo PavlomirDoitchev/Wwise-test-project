@@ -17,7 +17,8 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Enter()
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("Mantle", 0.1f);
-           // _playerStateMachine.CharacterController.enabled = false;
+            _playerStateMachine.ForceReceiver.ResetForces();
+            // _playerStateMachine.CharacterController.enabled = false;
         }
 
         public override void Tick(float deltaTime)
@@ -37,7 +38,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             if (_timer >= _mantleAnimationDuration)
             {
-                _playerStateMachine.CharacterController.enabled = true;
+                //_playerStateMachine.CharacterController.enabled = true;
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
             }
         }

@@ -8,7 +8,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            _playerStateMachine.Animator.CrossFadeInFixedTime("DoubleBlades_Idle", 0.1f);
+            _playerStateMachine.Animator.CrossFadeInFixedTime("DoubleBlades_Idle", 0.3f);
         }
 
         public override void Tick(float deltaTime)

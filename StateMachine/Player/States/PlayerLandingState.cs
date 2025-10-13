@@ -11,7 +11,8 @@ namespace Assets.Scripts.StateMachine.Player.States
         private float timer = 0f;
         private readonly float landingDuration;
         private string _currentSurface = "Dirt"; 
-        private readonly LayerMask groundMask = ~0; 
+        private readonly LayerMask groundMask = ~0;
+        private Vector3 hangPoint, standPoint;
 
         public PlayerLandingState(PlayerStateMachine stateMachine, float time) : base(stateMachine)
         {
@@ -42,6 +43,11 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoDash();
             DoSlide();
             timer += deltaTime;
+            if (CheckLedge(out hangPoint, out standPoint))
+            {
+                _playerStateMachine.ChangeState(new PlayerMantleState(_playerStateMachine, standPoint));
+                return;
+            }
             if (timer >= landingDuration)
             {
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));

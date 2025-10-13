@@ -262,8 +262,9 @@ namespace Assets.Scripts.StateMachine.Player
 
                     if (ledgeHeight > minLedgeHeight && ledgeHeight <= maxLedgeHeight)
                     {
+                        Vector3 forwardOffset = wallHit.normal * -0.4f;
                         ledgeHangPoint = wallHit.point;
-                        ledgeStandPoint = ledgeHit.point;
+                        ledgeStandPoint = ledgeHit.point + forwardOffset;
                         return true;
                     }
                 }
