@@ -18,6 +18,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             if (input.x != 0 || _playerStateMachine.ForceReceiver.verticalVelocity < -10f)
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             Move(deltaTime);
+            DoCrouch();
             //Fall(deltaTime);
             DoJump();
             MeleeAttacks();

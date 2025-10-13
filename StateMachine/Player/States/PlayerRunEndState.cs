@@ -19,7 +19,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Enter()
         {
             //_playerStateMachine.Animator.Play("RunEnd");
-            _playerStateMachine.Animator.CrossFadeInFixedTime("DualBlades_RunEnd", 0.4f);
+            _playerStateMachine.Animator.CrossFadeInFixedTime("RunEnd", 3f);
         }
 
         public override void Tick(float deltaTime)

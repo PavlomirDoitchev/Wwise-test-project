@@ -41,7 +41,7 @@ public class InputManager : MonoBehaviour
     public bool DashInput() => Input.GetKeyDown(keyBindingsDict["Dash"][0]);
     public bool SlideInput() => GetComboDown("Slide");
     public bool DropPlatform() => GetComboDown("DropPlatform");
-
+    public bool CrouchInput() => Input.GetKey(keyBindingsDict["Crouch"][0]);
     private bool GetComboDown(string action)
     {
         if (!keyBindingsDict.ContainsKey(action)) return false;

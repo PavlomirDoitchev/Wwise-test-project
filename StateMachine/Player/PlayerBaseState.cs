@@ -192,6 +192,14 @@ namespace Assets.Scripts.StateMachine.Player
                 );
             }
         }
+        protected void DoCrouch() 
+        {
+            var input = _playerStateMachine.InputManager;
+            if (input.CrouchInput())
+            {
+                _playerStateMachine.ChangeState(new PlayerCrouchState(_playerStateMachine));
+            }
+        }
         protected void DoDash()
         {
             var input = _playerStateMachine.InputManager;

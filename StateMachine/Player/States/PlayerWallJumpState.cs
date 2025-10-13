@@ -24,8 +24,8 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             _playerStateMachine.ForceReceiver.ResetForces();
             _playerStateMachine.ForceReceiver.JumpTo(
-                _playerStateMachine.PlayerStats.JumpForce,
-                jumpDirection * _playerStateMachine.PlayerStats.BaseSpeed * 1.1f
+                _playerStateMachine.PlayerStats.JumpForce * .2f,
+                jumpDirection * _playerStateMachine.PlayerStats.BaseSpeed * 3f
             );
 
             if (jumpDirection.x > 0)
@@ -63,6 +63,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                 Vector3 momentum = GetHorizontalMomentum();
                 _playerStateMachine.ForceReceiver.ResetVertical();
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, momentum));
+                return;
             }
         }
 

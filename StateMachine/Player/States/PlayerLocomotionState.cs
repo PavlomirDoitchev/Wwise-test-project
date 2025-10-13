@@ -35,6 +35,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             {
                 PlayerMove(deltaTime);
                 Fall(deltaTime);
+                DoCrouch();
                 DoJump();
                 MeleeAttacks();
                 DoDash();

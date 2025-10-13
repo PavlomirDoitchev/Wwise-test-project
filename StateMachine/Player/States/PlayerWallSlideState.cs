@@ -6,8 +6,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 {
     public class PlayerWallSlideState : PlayerBaseState
     {
-        private const float jumpHorizontalForce = 25f;
-
+        Vector3 momentum = Vector3.zero;
         public PlayerWallSlideState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
         public override void Enter()
@@ -29,24 +28,19 @@ namespace Assets.Scripts.StateMachine.Player.States
             {
                 Vector3 jumpDir = Vector3.up;
                 if (wallSide == PlayerStateMachine.WallSide.Left)
-                    jumpDir += Vector3.right * 1.2f; 
+                    jumpDir += Vector3.right; 
                 else if (wallSide == PlayerStateMachine.WallSide.Right)
-                    jumpDir += Vector3.left * 1.2f;
+                    jumpDir += Vector3.left;
 
                 jumpDir.Normalize();
-
-                _playerStateMachine.ForceReceiver.ResetForces();
-                _playerStateMachine.ForceReceiver.JumpTo(
-                    _playerStateMachine.PlayerStats.JumpForce * 0.1f,
-                    jumpDir * jumpHorizontalForce * 0.7f 
-                );
 
                 if (wallSide == PlayerStateMachine.WallSide.Left)
                     _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.right);
                 else
                     _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.left);
 
-                _playerStateMachine.ChangeState(new PlayerWallJumpState(_playerStateMachine, jumpDir * jumpHorizontalForce));
+                _playerStateMachine.ChangeState(new PlayerWallJumpState(_playerStateMachine, jumpDir));
+                //_playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine, jumpDir * jumpHorizontalForce));
                 return;
             }
 
@@ -59,6 +53,11 @@ namespace Assets.Scripts.StateMachine.Player.States
             if (!validWall || _playerStateMachine.CharacterController.isGrounded)
             {
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
+                return;
+            }
+            else if (_playerStateMachine.ForceReceiver.verticalVelocity < -12f) 
+            {
+                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, momentum));
                 return;
             }
 
