@@ -7,6 +7,8 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
     public class PlayerFallState : PlayerBaseState
     {
         private Vector3 _momentum;
+        private Vector3 hangPoint, standPoint;
+
         public PlayerFallState(PlayerStateMachine stateMachine, Vector3 momentum) : base(stateMachine)
         {
             _momentum = momentum;
@@ -26,6 +28,11 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
             if (_playerStateMachine.IsTouchingWall) 
             {
                 _playerStateMachine.ChangeState(new PlayerWallSlideState(_playerStateMachine));
+            }
+            if (CheckLedge(out hangPoint, out standPoint) && _playerStateMachine.ForceReceiver.verticalVelocity > -50f)
+            {
+                _playerStateMachine.ChangeState(new PlayerMantleState(_playerStateMachine, standPoint));
+                return;
             }
             if (IsGrounded())
             {

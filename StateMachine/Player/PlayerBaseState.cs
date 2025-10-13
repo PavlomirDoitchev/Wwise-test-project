@@ -2,6 +2,7 @@
 using Assets.Scripts.StateMachine.Player.States;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 namespace Assets.Scripts.StateMachine.Player
 {
@@ -244,22 +245,32 @@ namespace Assets.Scripts.StateMachine.Player
             Transform player = _playerStateMachine.transform;
             _playerStateMachine.origin = player.position + Vector3.up;
             _playerStateMachine.forward = player.forward;
-            
 
-            
-            if (Physics.Raycast(_playerStateMachine.origin, _playerStateMachine.forward, out RaycastHit wallHit, _playerStateMachine.forwardCheckDistance))
+
+
+            float forwardCheckDistance = 0.6f;
+            float maxLedgeHeight = 1.5f; 
+            float minLedgeHeight = 0.3f; 
+
+            if (Physics.Raycast(_playerStateMachine.origin, _playerStateMachine.forward, out RaycastHit wallHit, forwardCheckDistance))
             {
-                Vector3 ledgeCheckStart = wallHit.point + Vector3.up;
-                if (Physics.Raycast(ledgeCheckStart, Vector3.down, out RaycastHit ledgeHit, 2f))
+                Vector3 ledgeCheckStart = wallHit.point + Vector3.up * maxLedgeHeight;
+
+                if (Physics.Raycast(ledgeCheckStart, Vector3.down, out RaycastHit ledgeHit, maxLedgeHeight + 0.5f))
                 {
-                    ledgeHangPoint = wallHit.point;
-                    ledgeStandPoint = ledgeHit.point;
-                    return true;
+                    float ledgeHeight = ledgeHit.point.y - player.position.y;
+
+                    if (ledgeHeight > minLedgeHeight && ledgeHeight <= maxLedgeHeight)
+                    {
+                        ledgeHangPoint = wallHit.point;
+                        ledgeStandPoint = ledgeHit.point;
+                        return true;
+                    }
                 }
             }
-
             return false;
         }
+
         protected void DoAttack()
         {
             if (_playerStateMachine.InputManager.AttackInput())

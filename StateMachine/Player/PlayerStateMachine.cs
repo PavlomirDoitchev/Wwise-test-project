@@ -153,8 +153,7 @@ namespace Assets.Scripts.StateMachine.Player
             {
                 Gizmos.DrawLine(probe.position, probe.position + Vector3.down * probeDistance);
             }
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(origin, origin + forward * forwardCheckDistance);
+           
         }
     }
 }

@@ -54,7 +54,6 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             if (Physics.Raycast(_playerStateMachine.transform.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 1.5f, groundMask))
             {
-                // Detect by tag or custom component
                 if (hit.collider.CompareTag("Stone"))
                     _currentSurface = "Stone";
                 else if (hit.collider.CompareTag("Dirt"))

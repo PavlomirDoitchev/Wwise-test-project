@@ -12,6 +12,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         private float jumpTime;
         private float maxJumpTime = 0.7f;
         private bool isJumping;
+        private Vector3 hangPoint, standPoint;
         public PlayerJumpState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -46,7 +47,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
             {
                 isJumping = false; 
             }
-            Vector3 hangPoint, standPoint;
+
             if (CheckLedge(out hangPoint, out standPoint))
             {
                 _playerStateMachine.ChangeState(new PlayerMantleState(_playerStateMachine, standPoint));
