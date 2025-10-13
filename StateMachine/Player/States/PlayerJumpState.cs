@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Entities;
 using Assets.Scripts.StateMachine.Player;
+using Assets.Scripts.StateMachine.Player.States;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
@@ -45,7 +46,12 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
             {
                 isJumping = false; 
             }
-
+            Vector3 hangPoint, standPoint;
+            if (CheckLedge(out hangPoint, out standPoint))
+            {
+                _playerStateMachine.ChangeState(new PlayerMantleState(_playerStateMachine, standPoint));
+                return;
+            }
             if (_playerStateMachine.CharacterController.velocity.y <= 0)
             {
                 Vector3 currentMomentum = GetHorizontalMomentum();

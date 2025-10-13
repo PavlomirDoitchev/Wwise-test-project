@@ -15,7 +15,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             Vector2 input = GetFilteredMovementInput();
 
-            if (input.x != 0)
+            if (input.x != 0 || _playerStateMachine.ForceReceiver.verticalVelocity < -10f)
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             Move(deltaTime);
             //Fall(deltaTime);
@@ -25,8 +25,6 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoSlide();
         }
 
-        public override void Exit() {
-            Debug.Log("exit idle state");
-        }
+        public override void Exit() { }
     }
 }

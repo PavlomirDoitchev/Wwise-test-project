@@ -15,8 +15,10 @@ namespace Assets.Scripts.StateMachine.Player
         public Cooldown ComboCooldown { get; private set; }
         [SerializeField] float comboTimeout = 2f;
         public int ComboIndex { get; set; } = 0;
+
         public INotPushable currentLeftBlocker = null;
         public INotPushable currentRightBlocker = null;
+
         public LayerMask groundMask;
         public float probeDistance = 0.1f;
         [SerializeField] private int minProbesRequired = 2;
@@ -33,7 +35,10 @@ namespace Assets.Scripts.StateMachine.Player
         [SerializeField] private float wallCheckDistance = 0.6f;
         [SerializeField] private LayerMask wallMask;
 
-       
+        public Vector3 origin;
+        public Vector3 forward;
+        public float forwardCheckDistance = 0.6f;
+        public float waitForClimbThreshold = .2f;
 
         public enum WallSide
         {
@@ -148,6 +153,8 @@ namespace Assets.Scripts.StateMachine.Player
             {
                 Gizmos.DrawLine(probe.position, probe.position + Vector3.down * probeDistance);
             }
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(origin, origin + forward * forwardCheckDistance);
         }
     }
 }

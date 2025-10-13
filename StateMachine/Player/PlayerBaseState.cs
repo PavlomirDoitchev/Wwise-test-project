@@ -236,6 +236,30 @@ namespace Assets.Scripts.StateMachine.Player
                 _playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine, momentum));
             }
         }
+        protected bool CheckLedge(out Vector3 ledgeHangPoint, out Vector3 ledgeStandPoint)
+        {
+            ledgeHangPoint = Vector3.zero;
+            ledgeStandPoint = Vector3.zero;
+
+            Transform player = _playerStateMachine.transform;
+            _playerStateMachine.origin = player.position + Vector3.up;
+            _playerStateMachine.forward = player.forward;
+            
+
+            
+            if (Physics.Raycast(_playerStateMachine.origin, _playerStateMachine.forward, out RaycastHit wallHit, _playerStateMachine.forwardCheckDistance))
+            {
+                Vector3 ledgeCheckStart = wallHit.point + Vector3.up;
+                if (Physics.Raycast(ledgeCheckStart, Vector3.down, out RaycastHit ledgeHit, 2f))
+                {
+                    ledgeHangPoint = wallHit.point;
+                    ledgeStandPoint = ledgeHit.point;
+                    return true;
+                }
+            }
+
+            return false;
+        }
         protected void DoAttack()
         {
             if (_playerStateMachine.InputManager.AttackInput())
@@ -302,6 +326,7 @@ namespace Assets.Scripts.StateMachine.Player
             return "Dirt"; // Default fallback
         }
         public virtual void OnControllerColliderHit(ControllerColliderHit hit) { }
+        
     }
 
 }
