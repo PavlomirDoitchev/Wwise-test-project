@@ -79,7 +79,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                 if (isLastAttack || !queuedNextAttack)
                 {
                     _playerStateMachine.ComboIndex = 0;
-                    _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                    _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
                 }
             }
         }

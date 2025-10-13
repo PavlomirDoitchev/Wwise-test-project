@@ -26,7 +26,7 @@ public class PlayerCollisionState : PlayerBaseState
         Move(Vector3.zero, deltaTime);
 
         if (duration <= 0f)
-            _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+            _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
     }
 
     public override void Exit() { }

@@ -19,7 +19,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            _playerStateMachine.Animator.CrossFadeInFixedTime("ChaseDown_End", 0.1f);
+            _playerStateMachine.Animator.CrossFadeInFixedTime("RunEnd", 0.1f);
 
             float horizontalInput = _playerStateMachine.InputManager.MovementInput().x;
             float yRotation = horizontalInput > 0 ? 90f : -90f;

@@ -39,7 +39,8 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoJump();
             PlayerMove(deltaTime);
             DoAttack();
-
+            DoDash();
+            DoSlide();
             timer += deltaTime;
             if (timer >= landingDuration)
             {

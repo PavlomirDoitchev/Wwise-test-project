@@ -36,7 +36,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             {
                 if (CanStandUp())
                 {
-                    _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
+                    _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
                     return;
                 }
                 else

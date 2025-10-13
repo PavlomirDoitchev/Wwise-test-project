@@ -25,6 +25,8 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoSlide();
         }
 
-        public override void Exit() { }
+        public override void Exit() {
+            Debug.Log("exit idle state");
+        }
     }
 }

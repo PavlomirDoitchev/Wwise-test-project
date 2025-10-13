@@ -43,7 +43,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         }
         public override void Exit()
         {
-
+            Debug.Log("exit locomotion state");
         }
         
 
