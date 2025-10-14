@@ -42,6 +42,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoAttack();
             DoDash();
             DoSlide();
+            DoCrouch();
             timer += deltaTime;
             if (CheckLedge(out hangPoint, out standPoint))
             {

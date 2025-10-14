@@ -51,7 +51,7 @@ public class PlayerDashState : PlayerBaseState
         duration -= deltaTime;
         if (duration <= 0f)
         {
-            _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
+            _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             return;
         }
 

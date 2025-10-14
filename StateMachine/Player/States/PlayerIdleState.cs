@@ -15,7 +15,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             Vector2 input = GetFilteredMovementInput();
 
-            if (input.x != 0 || _playerStateMachine.ForceReceiver.verticalVelocity < -10f)
+            if (input.x != 0 || _playerStateMachine.ForceReceiver.verticalVelocity < -2f)
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             Move(deltaTime);
             DoCrouch();
