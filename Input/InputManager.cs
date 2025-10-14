@@ -34,7 +34,8 @@ public class InputManager : MonoBehaviour
     }
 
     
-    public bool JumpInput() => Input.GetKey(keyBindingsDict["Jump"][0]);
+    public bool JumpInput() => Input.GetKeyDown(keyBindingsDict["Jump"][0]);
+    public bool JumpHeld() => Input.GetKey(keyBindingsDict["Jump"][0]);
     public bool AttackInput() => Input.GetKeyDown(keyBindingsDict["Attack"][0]);
     public bool SprintInput() => Input.GetKey(keyBindingsDict["Sprint"][0]);
     public bool DropAttackInput() => GetComboDown("DropAttack");

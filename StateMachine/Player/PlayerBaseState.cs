@@ -228,7 +228,7 @@ namespace Assets.Scripts.StateMachine.Player
         {
             var input = _playerStateMachine.InputManager;
 
-            if (input.JumpInput() && _playerStateMachine.CharacterController.isGrounded)
+            if (input.JumpInput())
             {
                 string surface = DetectSurface();
 
