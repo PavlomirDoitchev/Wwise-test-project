@@ -114,7 +114,7 @@ namespace Assets.Scripts.StateMachine.Player
 
         }
         /// <summary>
-        /// Move used in PoP to restrict movement to horizontal axis only.
+        /// Move with stronger gravity multiplier when falling or jump button released.
         /// </summary>
         /// <param name="deltaTime"></param>
         protected void PlayerMoveAirborne_PoP(float deltaTime)
