@@ -19,6 +19,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
             _playerStateMachine.ForceReceiver.SetForce(_momentum);
+            Debug.Log("Fall state entered");
         }
 
         public override void Tick(float deltaTime)

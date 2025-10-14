@@ -114,6 +114,34 @@ namespace Assets.Scripts.StateMachine.Player
 
         }
         /// <summary>
+        /// Move used in PoP to restrict movement to horizontal axis only.
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        protected void PlayerMoveAirborne_PoP(float deltaTime)
+        {
+            Vector2 input = _playerStateMachine.InputManager.MovementInput();
+            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
+
+            float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
+            float maxSpeed = isSprinting ? baseSpeed * 1.3f : baseSpeed;
+            float acceleration = _playerStateMachine.PlayerStats.AirAcceleration;
+
+            Vector3 moveDir = new Vector3(input.x, 0f, 0f).normalized;
+            Vector3 currentVelocity = new Vector3(_playerStateMachine.ForceReceiver.Movement.x, 0f, 0f);
+            Vector3 targetVelocity = moveDir * maxSpeed;
+
+            Vector3 newVelocity = moveDir.magnitude > 0.1f
+                ? Vector3.MoveTowards(currentVelocity, targetVelocity, acceleration * deltaTime)
+                : currentVelocity;
+
+            _playerStateMachine.ForceReceiver.SetForce(new Vector3(newVelocity.x, _playerStateMachine.ForceReceiver.verticalVelocity, 0f));
+
+            Move(_playerStateMachine.ForceReceiver.Movement * deltaTime, deltaTime);
+
+            if (Mathf.Abs(input.x) > 0.1f)
+                HandleFlip(input.x);
+        }
+        /// <summary>
         /// Movement used during attacks to preserve rotation/flip without modifying speed.
         /// </summary>
         protected void RotateDuringAttack(float deltaTime)
