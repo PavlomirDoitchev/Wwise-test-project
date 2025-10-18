@@ -12,7 +12,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         private float elapsed;
 
         private float jumpTime;
-        private float maxJumpTime = 0.15f;
+        private float maxJumpTime = 0.2f;
         private bool isJumping;
 
         private Vector3 hangPoint, standPoint;
@@ -75,7 +75,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                     forwardMotion = Vector3.left;
                 }
                 else { forwardMotion = Vector3.right; }
-                _playerStateMachine.ForceReceiver.JumpTo(extraVertical * 1.2f, forwardMotion);
+                _playerStateMachine.ForceReceiver.JumpTo(extraVertical, forwardMotion);
                 jumpTime += deltaTime;
             }
             else
@@ -94,6 +94,8 @@ namespace Assets.Scripts.StateMachine.Player.States
             if (_playerStateMachine.ForceReceiver.verticalVelocity <= -10f)
             {
                 Vector3 horizontalMomentum = GetHorizontalMomentum();
+                Debug.Log($"[WallJump→Fall] Momentum: {_playerStateMachine.ForceReceiver.Movement}, Facing: {_playerStateMachine.transform.forward}");
+                _playerStateMachine.LastFacingDirection = _playerStateMachine.transform.forward;
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, horizontalMomentum));
             }
         }

@@ -18,12 +18,12 @@ namespace Assets.Scripts.StateMachine.Player
 
         public INotPushable currentLeftBlocker = null;
         public INotPushable currentRightBlocker = null;
-
         public LayerMask groundMask;
         public float probeDistance = 0.1f;
         [SerializeField] private int minProbesRequired = 2;
         public Transform[] groundProbes;
         public Collider currentGroundCollider = null;
+        public Vector3 LastFacingDirection { get; set; } = Vector3.right;
         public Vector3 CurrentVelocity { get; set; } = Vector3.zero;
 
         [SerializeField] private float blockerCheckHeight = 1.8f;
