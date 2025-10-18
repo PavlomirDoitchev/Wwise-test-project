@@ -17,9 +17,20 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
 
         public override void Enter()
         {
+            //_playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
+            //_playerStateMachine.ForceReceiver.SetForce(_momentum);
+
+
             _playerStateMachine.Animator.CrossFadeInFixedTime("ARPG_Samurai_Airborne", 0.1f);
-            _playerStateMachine.ForceReceiver.SetForce(_momentum);
-            Debug.Log("Fall state entered");
+
+            // Apply horizontal momentum but preserve vertical velocity from ForceReceiver
+            Vector3 horizontal = new Vector3(_momentum.x, 0f, 0f);
+
+            // Ensure ForceReceiver has the horizontal momentum and current vertical
+            _playerStateMachine.ForceReceiver.SetForce(new Vector3(horizontal.x, _playerStateMachine.ForceReceiver.verticalVelocity, 0f));
+
+            // Also set the state machine's CurrentVelocity so Locomotion uses the right value
+            _playerStateMachine.CurrentVelocity = new Vector3(horizontal.x, _playerStateMachine.CurrentVelocity.y, 0f);
         }
 
         public override void Tick(float deltaTime)

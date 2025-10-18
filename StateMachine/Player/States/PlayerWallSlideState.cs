@@ -16,6 +16,8 @@ namespace Assets.Scripts.StateMachine.Player.States
             else
                 _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.right);
 
+            
+
             _playerStateMachine.Animator.CrossFadeInFixedTime("WallJump_Loop", 0.1f);
         }
 
@@ -24,11 +26,13 @@ namespace Assets.Scripts.StateMachine.Player.States
             var wallSide = _playerStateMachine.GetWallContact();
             DoWallDash();
             _playerStateMachine.ForceReceiver.ApplyWallSlideGravity(.85f, -12f);
+
             if (_playerStateMachine.InputManager.JumpInput())
             {
                 Vector3 jumpDir = Vector3.up;
+
                 if (wallSide == PlayerStateMachine.WallSide.Left)
-                    jumpDir += Vector3.right; 
+                    jumpDir += Vector3.right;
                 else if (wallSide == PlayerStateMachine.WallSide.Right)
                     jumpDir += Vector3.left;
 
@@ -39,8 +43,11 @@ namespace Assets.Scripts.StateMachine.Player.States
                 else
                     _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.left);
 
+                jumpDir = _playerStateMachine.transform.TransformDirection(jumpDir);
+
+                momentum = _playerStateMachine.transform.TransformDirection(momentum);
+
                 _playerStateMachine.ChangeState(new PlayerWallJumpState(_playerStateMachine, jumpDir));
-                //_playerStateMachine.ChangeState(new PlayerJumpState(_playerStateMachine, jumpDir * jumpHorizontalForce));
                 return;
             }
 
@@ -55,14 +62,18 @@ namespace Assets.Scripts.StateMachine.Player.States
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
                 return;
             }
-            else if (_playerStateMachine.ForceReceiver.verticalVelocity < -12f) 
+            else if (_playerStateMachine.ForceReceiver.verticalVelocity < -12f)
             {
+                // rotate momentum before passing to fall state, too
+                momentum = _playerStateMachine.transform.TransformDirection(momentum);
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, momentum));
                 return;
             }
 
             Move(_playerStateMachine.ForceReceiver.Movement * deltaTime, deltaTime);
         }
+
+
 
         public override void Exit() { }
     }

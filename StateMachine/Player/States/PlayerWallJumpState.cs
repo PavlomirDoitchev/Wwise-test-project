@@ -12,19 +12,16 @@ namespace Assets.Scripts.StateMachine.Player.States
         private float elapsed;
 
         private float jumpTime;
-        private float maxJumpTime = 0.2f;
+        private float maxJumpTime = 0.15f;
         private bool isJumping;
 
         private Vector3 hangPoint, standPoint;
 
-        private float initialHorizontalPush = 16f;
-        private float initialVerticalPush = 20f;
-        private float holdHorizontalFactor = 2f;
-        private float holdVerticalFactor = 0.2f;
+        private float initialHorizontalPush = 5f;
+        private float initialVerticalPush = 15f;
+        private float holdVerticalFactor = 0.2f; 
+        private Vector3 forwardMotion;
 
-        private float rotationLockDuration = 0.15f;
-        private float rotationLockTimer = 0f;
-        private bool rotationLocked = true;
         public PlayerWallJumpState(PlayerStateMachine stateMachine, Vector3 direction) : base(stateMachine)
         {
             jumpDirection = direction.normalized;
@@ -32,41 +29,53 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
+            
             _playerStateMachine.Animator.CrossFadeInFixedTime("Jump", 0.1f);
-
             _playerStateMachine.ForceReceiver.ResetForces();
 
-            Vector3 horizontalImpulse = new Vector3(jumpDirection.x, 0f, 0f).normalized * initialHorizontalPush;
-            _playerStateMachine.ForceReceiver.JumpTo(initialVerticalPush, horizontalImpulse);
+            var wallSide = _playerStateMachine.GetWallContact();
 
-            if (jumpDirection.x > 0)
-                _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.right);
-            else if (jumpDirection.x < 0)
-                _playerStateMachine.transform.rotation = Quaternion.LookRotation(Vector3.left);
+            Vector3 horizontalDir;
+            if (wallSide == PlayerStateMachine.WallSide.Left)
+            {
+                horizontalDir = Vector3.right;
+            }
+            else if (wallSide == PlayerStateMachine.WallSide.Right)
+            {
+                horizontalDir = Vector3.left;
+            }
+            else
+            {
+                horizontalDir = jumpDirection.x >= 0 ? Vector3.right : Vector3.left; 
+            }
 
+            Vector3 finalJumpDir = (horizontalDir + Vector3.up).normalized;
+
+            _playerStateMachine.ForceReceiver.ResetForces();
+            _playerStateMachine.ForceReceiver.JumpTo(initialVerticalPush, horizontalDir * initialHorizontalPush);
+
+            Quaternion targetRotation = Quaternion.LookRotation(horizontalDir, Vector3.up);
+            _playerStateMachine.transform.rotation = targetRotation;
 
             elapsed = 0f;
             jumpTime = 0f;
             isJumping = true;
-            rotationLockTimer = 0f;
         }
 
         public override void Tick(float deltaTime)
         {
+          
             elapsed += deltaTime;
-            rotationLockTimer += deltaTime;
-            if (rotationLockTimer > rotationLockDuration)
-                rotationLocked = false;
+
             if (isJumping && _playerStateMachine.InputManager.JumpHeld() && jumpTime < maxJumpTime)
             {
                 float extraVertical = initialVerticalPush * holdVerticalFactor * deltaTime / maxJumpTime;
-                float extraHorizontal = initialHorizontalPush * holdHorizontalFactor * deltaTime / maxJumpTime;
-
-                Vector3 horizontalDir = new Vector3(jumpDirection.x, 0f, 0f).normalized;
-
-                _playerStateMachine.ForceReceiver.Jump(extraVertical);
-                _playerStateMachine.ForceReceiver.AddForce(horizontalDir * extraHorizontal);
-
+                if (jumpDirection.x >= 0)
+                {
+                    forwardMotion = Vector3.left;
+                }
+                else { forwardMotion = Vector3.right; }
+                _playerStateMachine.ForceReceiver.JumpTo(extraVertical * 1.2f, forwardMotion);
                 jumpTime += deltaTime;
             }
             else
@@ -80,39 +89,11 @@ namespace Assets.Scripts.StateMachine.Player.States
                 return;
             }
 
-            if (elapsed < airControlLockTime)
-            {
-                Move(_playerStateMachine.ForceReceiver.Movement * deltaTime, deltaTime);
-            }
-            else
-            {
-                float t = Mathf.Clamp01((elapsed - airControlLockTime) / airControlRestoreTime);
-                float controlFactor = Mathf.SmoothStep(0f, 1f, t);
+            Move(_playerStateMachine.ForceReceiver.Movement * deltaTime, deltaTime);
 
-                Vector2 input = _playerStateMachine.InputManager.MovementInput();
-                Vector3 moveInput = new Vector3(input.x, 0f, 0f).normalized * controlFactor;
-
-                Vector3 totalMove = new Vector3(
-                    moveInput.x * _playerStateMachine.PlayerStats.BaseSpeed + _playerStateMachine.ForceReceiver.Movement.x,
-                    _playerStateMachine.ForceReceiver.Movement.y,
-                    0f
-                );
-
-                Move(totalMove * deltaTime, deltaTime);
-
-                if (!rotationLocked)
-                {
-                    float inputX = _playerStateMachine.InputManager.MovementInput().x;
-                    if (Mathf.Abs(inputX) > 0.1f)
-                        HandleFlip(inputX);
-                }
-            }
-
-            // Transition to fall
             if (_playerStateMachine.ForceReceiver.verticalVelocity <= -10f)
             {
                 Vector3 horizontalMomentum = GetHorizontalMomentum();
-                //_playerStateMachine.ForceReceiver.ResetVertical();
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, horizontalMomentum));
             }
         }
@@ -120,4 +101,3 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Exit() { }
     }
 }
-

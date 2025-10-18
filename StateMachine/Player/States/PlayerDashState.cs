@@ -60,7 +60,12 @@ public class PlayerDashState : PlayerBaseState
 
     public override void Exit()
     {
-        _playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
+        //_playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
+        var currentImpact = _playerStateMachine.ForceReceiver.Movement;
+        currentImpact.y = 0f;
+
+        // Keep a fraction of the dash momentum for a single frame to prevent direction flip
+        _playerStateMachine.ForceReceiver.SetForce(currentImpact * 0.25f);
     }
 
     public override void OnControllerColliderHit(ControllerColliderHit hit)

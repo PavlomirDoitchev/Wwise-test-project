@@ -26,7 +26,6 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             _animationDuration -= deltaTime;
 
-            // Keep moving logic in case the player slides
             PlayerMove(deltaTime);
             Fall(deltaTime);
             DoJump();
@@ -34,7 +33,6 @@ namespace Assets.Scripts.StateMachine.Player.States
             DoDash();
             DoSlide();
 
-            // After run-end animation finishes
             if (_animationDuration <= 0f)
             {
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
