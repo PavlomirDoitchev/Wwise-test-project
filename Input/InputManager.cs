@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    private bool jumpHeldLastFrame = false;
-    private bool jumpReleasedSinceLastJump = true;
+    public bool InputEnabled { get; set; } = true;
+
     [Header("Key Bindings")]
     [SerializeField] private List<KeyBinding> keyBindingsList = new List<KeyBinding>();
 
@@ -20,9 +20,10 @@ public class InputManager : MonoBehaviour
         LoadKeyBindings();
     }
 
-
     public Vector2 MovementInput()
     {
+        if (!InputEnabled) return Vector2.zero;
+
         float horizontal = 0;
         float vertical = 0;
 
@@ -33,18 +34,19 @@ public class InputManager : MonoBehaviour
         return MoveInput;
     }
 
-    
-    public bool JumpInput() => Input.GetKeyDown(keyBindingsDict["Jump"][0]);
-    public bool JumpHeld() => Input.GetKey(keyBindingsDict["Jump"][0]);
-    public bool AttackInput() => Input.GetKeyDown(keyBindingsDict["Attack"][0]);
-    public bool SprintInput() => Input.GetKey(keyBindingsDict["Sprint"][0]);
-    public bool DropAttackInput() => GetComboDown("DropAttack");
-    public bool DashInput() => Input.GetKeyDown(keyBindingsDict["Dash"][0]);
-    public bool SlideInput() => GetComboDown("Slide");
-    public bool DropPlatform() => GetComboDown("DropPlatform");
-    public bool CrouchInput() => Input.GetKey(keyBindingsDict["Crouch"][0]);
+    public bool JumpInput() => InputEnabled && Input.GetKeyDown(keyBindingsDict["Jump"][0]);
+    public bool JumpHeld() => InputEnabled && Input.GetKey(keyBindingsDict["Jump"][0]);
+    public bool AttackInput() => InputEnabled && Input.GetKeyDown(keyBindingsDict["Attack"][0]);
+    public bool SprintInput() => InputEnabled && Input.GetKey(keyBindingsDict["Sprint"][0]);
+    public bool DropAttackInput() => InputEnabled && GetComboDown("DropAttack");
+    public bool DashInput() => InputEnabled && Input.GetKeyDown(keyBindingsDict["Dash"][0]);
+    public bool SlideInput() => InputEnabled && GetComboDown("Slide");
+    public bool DropPlatform() => InputEnabled && GetComboDown("DropPlatform");
+    public bool CrouchInput() => InputEnabled && Input.GetKey(keyBindingsDict["Crouch"][0]);
+
     private bool GetComboDown(string action)
     {
+        if (!InputEnabled) return false;
         if (!keyBindingsDict.ContainsKey(action)) return false;
 
         KeyCode[] keys = keyBindingsDict[action];
@@ -83,5 +85,3 @@ public class InputManager : MonoBehaviour
         }
     }
 }
-
-

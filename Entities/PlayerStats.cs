@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-
+using Assets.Scripts.Utility.UI;
+using Assets.Scripts.Utilities.Contracts;
 namespace Assets.Scripts.Entities
 {
-    public class PlayerStats : MonoBehaviour
+    public class PlayerStats : Subject, IDamagable
     {
         [field: SerializeField] public float JumpForce { get; private set; }
         [field: SerializeField] public float BaseSpeed { get; private set; } = 7f;
@@ -42,15 +43,19 @@ namespace Assets.Scripts.Entities
         public void TakeDamage(int damageAmount)
         {
             PlayerHealth -= damageAmount;
+
             UpdateHeartbeatRTPC();
             Die();
+            NotifyObservers();
         }
         public void Heal(int healAmount)
         {
             PlayerHealth += healAmount;
             UpdateHeartbeatRTPC();
+
             if (PlayerHealth > 100)
                 PlayerHealth = 100;
+            NotifyObservers();
         }
         private void Die()
         {

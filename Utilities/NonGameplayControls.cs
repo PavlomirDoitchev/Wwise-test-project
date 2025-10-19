@@ -1,13 +1,21 @@
 ﻿using Assets.Scripts.StateMachine.Player;
 using UnityEngine;
+using System.Collections;
+using Assets.Scripts.Utilities.Contracts;
+using UnityEngine.UI;
+using Assets.Scripts.Entities;
+using NHance.Assets.Scripts.Enums;
 
-public class NonGameplayControls : MonoBehaviour
+public class NonGameplayControls : MonoBehaviour, IObserver
 {
     [SerializeField] PlayerStateMachine _player;
     [SerializeField] Canvas _canvas;
-
+    [SerializeField] Canvas _playerInfo;
+    [SerializeField] Image playerHealth;
+    int currentHealth;
 
     private bool isPaused = false;
+
     private void Start()
     {
         AkUnitySoundEngine.SetState("GamePause", "Playing");
@@ -18,12 +26,8 @@ public class NonGameplayControls : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused) 
-            {
+            if (isPaused)
                 ResumeGame();
-                
-                _player.InputManager.enabled = true;
-            }
             else
                 PauseGame();
         }
@@ -31,19 +35,41 @@ public class NonGameplayControls : MonoBehaviour
 
     public void PauseGame()
     {
-        Time.timeScale = 0f;    
+        Time.timeScale = 0f;
         isPaused = true;
-        _player.InputManager.enabled = false;
+        _player.InputManager.InputEnabled = false;
         _canvas.enabled = true;
         AkUnitySoundEngine.SetState("GamePause", "Paused");
     }
 
     public void ResumeGame()
     {
-        //_player.InputManager.enabled = true;
         Time.timeScale = 1f;
         isPaused = false;
         _canvas.enabled = false;
         AkUnitySoundEngine.SetState("GamePause", "Playing");
+        StartCoroutine(EnableInputNextFrame());
+    }
+
+    private IEnumerator EnableInputNextFrame()
+    {
+        while (Input.GetMouseButton(0))
+            yield return null;
+
+        _player.InputManager.InputEnabled = true;
+    }
+
+    public void OnNotify()
+    {
+        currentHealth = _player.PlayerStats.PlayerHealth;
+        playerHealth.fillAmount = _player.PlayerStats.PlayerHealth * .01f;
+    }
+    private void OnEnable()
+    {
+        _player.PlayerStats.AddObserver(this);
+    }
+    private void OnDisable()
+    {
+        _player.PlayerStats.AddObserver(this);
     }
 }
