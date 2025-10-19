@@ -7,8 +7,6 @@ namespace Assets.Scripts.StateMachine.Player.States
     public class PlayerSlideState : PlayerBaseState
     {
         float _duration;
-        float _slideTimer;
-        Vector3 momentum;
         public PlayerSlideState(PlayerStateMachine stateMachine, float duration) : base(stateMachine)
         {
             _duration = duration;
@@ -16,31 +14,36 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            PreserveDirection();
             _playerStateMachine.Animator.CrossFadeInFixedTime("Slide", .1f);
             _playerStateMachine.CharacterController.height = .5f;
             _playerStateMachine.CharacterController.center = new Vector3(0f, 0.25f, 0f);
-            momentum = _playerStateMachine.transform.forward * 3f; //testing momentum
+            _playerStateMachine.ForceReceiver
+                .SetForce(_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
         }
 
 
         public override void Tick(float deltaTime)
         {
-            if (!_playerStateMachine.IsSupported()) 
-            {
-                _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, momentum));
-            }
-            _slideTimer += deltaTime / _duration;
-            float normalizedTime = Mathf.Clamp01(_slideTimer);
-            float speedMultiplier = _playerStateMachine.slideSpeedCurve.Evaluate(normalizedTime);
-
-            Vector3 move = _playerStateMachine.transform.forward *
-                           _playerStateMachine.PlayerStats.DashForce * speedMultiplier;
-
-            _playerStateMachine.CharacterController.Move(move * deltaTime);
-
-            if (_slideTimer >= 1f && CanStandUp())
+            if (!_playerStateMachine.IsSupported())
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
+            
+
+            _duration -= deltaTime;
+
+            if (_duration <= 0f)
+            {
+                if (CanStandUp())
+                {
+                    _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
+                    return;
+                }
+                else
+                {
+                    _duration = 0.1f;
+                }
+            }
+
+            ApplySlideMovement(deltaTime);
         }
 
         public override void Exit()
@@ -72,8 +75,15 @@ namespace Assets.Scripts.StateMachine.Player.States
             Vector3 end = start + Vector3.up * (2f - cc.height);
 
             return !Physics.CheckCapsule(start, end, cc.radius,
-                _playerStateMachine.groundMask); 
+                _playerStateMachine.groundMask);
         }
-     
+        private void ApplySlideMovement(float deltaTime)
+        {
+            Vector3 slideDir = _playerStateMachine.transform.forward;
+
+            _playerStateMachine.ForceReceiver.AddForce(slideDir * _playerStateMachine.PlayerStats.DashForce * deltaTime);
+
+            Move(deltaTime);
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Assets.Scripts.Entities
     public class PlayerFootsteps : MonoBehaviour
     {
         [SerializeField] private string footstepEventName = "Play_Footstep";
-        [SerializeField] private float stepDistance = 2f;
+        private float stepDistance = 2.5f;
         [SerializeField] private LayerMask groundMask;
 
         private PlayerStateMachine _playerStateMachine;
@@ -38,7 +38,16 @@ namespace Assets.Scripts.Entities
 
             float currentStepDistance = stepDistance;
             if (_playerStateMachine.InputManager.SprintInput())
+            {
+                stepDistance = 2f;
                 currentStepDistance *= 1.1f;
+
+            }
+            else 
+            {
+                stepDistance = 2.5f;
+            }
+
 
             if (_distanceTraveled >= currentStepDistance)
             {
