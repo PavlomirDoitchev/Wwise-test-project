@@ -40,6 +40,10 @@ namespace Assets.Scripts.StateMachine.Player
         public float forwardCheckDistance = 0.6f;
         public float waitForClimbThreshold = .2f;
 
+
+        public AnimationCurve slideSpeedCurve;
+
+
         public enum WallSide
         {
             None,

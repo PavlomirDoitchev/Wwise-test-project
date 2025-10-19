@@ -21,6 +21,13 @@ namespace Assets.Scripts.StateMachine.Player
         }
 
         #region Movement
+        /// <summary>
+        /// Remember direction of last state
+        /// </summary>
+        protected void PreserveDirection() 
+        {
+            _playerStateMachine.LastFacingDirection = _playerStateMachine.transform.forward;
+        }
 
         /// <summary>
         /// Moves the player including applied forces from ForceReceiver.
@@ -80,6 +87,37 @@ namespace Assets.Scripts.StateMachine.Player
             Vector3 move = scaledInput * 2;
             Move((move + _playerStateMachine.ForceReceiver.Movement) * deltaTime, deltaTime);
         }
+        protected void PlayerMoveAirborne(float deltaTime, bool allowFlip = true)
+        {
+            Vector2 input = _playerStateMachine.InputManager.MovementInput();
+            bool isSprinting = _playerStateMachine.InputManager.SprintInput();
+
+            float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
+            float maxSpeed = isSprinting ? baseSpeed * 1.3f : baseSpeed;
+            float acceleration = _playerStateMachine.PlayerStats.AirAcceleration;
+
+            Vector2 filteredInput = GetFilteredMovementInput();
+            Vector3 moveDir = new Vector3(filteredInput.x, 0f, 0f).normalized;
+
+            Vector3 currentVelocity = new Vector3(_playerStateMachine.ForceReceiver.Movement.x, 0f, 0f);
+            Vector3 targetVelocity = moveDir * maxSpeed;
+
+            Vector3 newVelocity = Vector3.MoveTowards(
+                currentVelocity,
+                targetVelocity,
+                acceleration * deltaTime
+            );
+
+            _playerStateMachine.ForceReceiver.SetForce(
+                new Vector3(newVelocity.x, _playerStateMachine.ForceReceiver.verticalVelocity, 0f)
+            );
+
+            Move(newVelocity, deltaTime);
+
+            if (allowFlip)
+                HandleFlip(filteredInput.x);
+        }
+
         protected void PlayerMoveAirborne(float deltaTime)
         {
 
@@ -111,7 +149,12 @@ namespace Assets.Scripts.StateMachine.Player
 
             Move(newVelocity, deltaTime);
             HandleFlip(filteredInput.x);
-
+            if (Mathf.Abs(filteredInput.x) < 0.3f)
+            {
+                // Restore the direction from last valid facing
+                _playerStateMachine.transform.rotation =
+                    Quaternion.LookRotation(_playerStateMachine.LastFacingDirection, Vector3.up);
+            }
         }
         /// <summary>
         /// Move with stronger gravity multiplier when falling or jump button released.
@@ -184,11 +227,12 @@ namespace Assets.Scripts.StateMachine.Player
         /// </summary>
         protected void HandleFlip(float horizontalInput)
         {
-            if (horizontalInput != 0f)
-            {
-                float yRotation = horizontalInput > 0 ? 90f : -90f;
-                _playerStateMachine.transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
-            }
+            if (Mathf.Abs(horizontalInput) < 0.3f)
+                return;
+
+            float yRotation = horizontalInput > 0 ? 90f : -90f;
+            _playerStateMachine.transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+            _playerStateMachine.LastFacingDirection = _playerStateMachine.transform.forward;
         }
         #endregion
 

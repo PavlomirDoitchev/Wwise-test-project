@@ -34,8 +34,8 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
         {
             PlayerMoveAirborne(deltaTime);
             DoDash();
-            
-            if (_playerStateMachine.IsTouchingWall) 
+
+            if (_playerStateMachine.IsTouchingWall)
             {
                 _playerStateMachine.ChangeState(new PlayerWallSlideState(_playerStateMachine));
             }

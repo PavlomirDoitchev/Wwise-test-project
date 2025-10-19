@@ -43,7 +43,7 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
             }
             else
             {
-                isJumping = false; 
+                isJumping = false;
             }
 
             if (CheckLedge(out hangPoint, out standPoint))
@@ -61,10 +61,10 @@ namespace Assets.Scripts.State_Machine.Player_State_Machine
                 return;
             }
         }
-        
+
         public override void Exit()
         {
         }
-        
+
     }
 }

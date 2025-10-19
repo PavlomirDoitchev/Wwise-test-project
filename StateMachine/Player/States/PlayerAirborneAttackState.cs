@@ -31,6 +31,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             _playerStateMachine.ForceReceiver.SetForce(horizontalMomentum);
 
             _playerStateMachine.ForceReceiver.Jump(upwardKick * 4);
+            PreserveDirection();
         }
 
         public override void Tick(float deltaTime)
@@ -55,6 +56,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             if (elapsedTime >= attackDuration || normalizedTime >= 1f)
             {
                 Vector3 currentMomentum = GetHorizontalMomentum();
+                PreserveDirection();
                 _playerStateMachine.ChangeState(new PlayerFallState(_playerStateMachine, currentMomentum));
                 return;
             }

@@ -19,7 +19,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             _playerStateMachine.Animator.CrossFadeInFixedTime(sprintAttackAnimation, crossfadeDuration);
 
             _playerStateMachine.ForceReceiver.SetForce(_playerStateMachine.transform.forward * forwardForce);
-
+            PreserveDirection();
             AkUnitySoundEngine.PostEvent("Play_Swing_Woosh", _playerStateMachine.gameObject);
         }
 

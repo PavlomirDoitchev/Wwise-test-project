@@ -29,7 +29,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             if (_justEnteredTimer <= 0)
             {
-                if (Mathf.Abs(velocityX) > velocityThreshold && inputX != 0 && Mathf.Sign(inputX) != Mathf.Sign(velocityX))
+                if (Mathf.Abs(velocityX) > velocityThreshold && inputX != 0 && Mathf.Sign(inputX) != Mathf.Sign(velocityX) && _playerStateMachine.CharacterController.isGrounded)
                 {
                     _playerStateMachine.ChangeState(new PlayerTurnState(_playerStateMachine));
                 }

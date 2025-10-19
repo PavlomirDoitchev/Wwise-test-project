@@ -24,7 +24,7 @@ namespace Assets.Scripts.StateMachine.Player.States
         public override void Tick(float deltaTime)
         {
             var wallSide = _playerStateMachine.GetWallContact();
-            DoWallDash();
+            //DoWallDash();
             _playerStateMachine.ForceReceiver.ApplyWallSlideGravity(.85f, -12f);
 
             if (_playerStateMachine.InputManager.JumpInput())

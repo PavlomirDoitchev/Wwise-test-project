@@ -5,66 +5,55 @@ using UnityEngine;
 
 public class PlayerDashState : PlayerBaseState
 {
-    private float duration;
-    //private float lastGroundedTime;
-    //private const float groundedBuffer = 0.15f; 
+    private float _duration;
+    private float _dashDuration;
     private bool shouldGoInOppositeDir;
-
+    private float normalizedTime;
+    private float speedMultiplier;
+    private Vector3 _dashDirection;
     public PlayerDashState(PlayerStateMachine stateMachine, float duration) : base(stateMachine)
     {
-        this.duration = duration;
+        this._duration = duration;
     }
     public PlayerDashState(PlayerStateMachine stateMachine, float duration, bool direction) : base(stateMachine)
     {
-        this.duration = duration;
+        this._duration = duration;
         this.shouldGoInOppositeDir = direction;
     }
     public override void Enter()
     {
-        //if (_playerStateMachine.CharacterController.isGrounded)
-        //    lastGroundedTime = Time.time;
-
-        //bool groundedBuffered = Time.time - lastGroundedTime <= groundedBuffer;
-
-        //if (groundedBuffered)
-        //    _playerStateMachine.Animator.CrossFadeInFixedTime("Slide", 0.1f);
-        //else
         _playerStateMachine.Animator.CrossFadeInFixedTime("Dash", 0.1f);
-        if (shouldGoInOppositeDir)
-        {
-            _playerStateMachine.ForceReceiver.SetForce(-_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
-            _playerStateMachine.transform.rotation = Quaternion.LookRotation(-_playerStateMachine.transform.forward);
-        }
-        else
-        {
-            _playerStateMachine.ForceReceiver
-                .SetForce(_playerStateMachine.transform.forward * _playerStateMachine.PlayerStats.DashForce);
-        }
+
     }
 
     public override void Tick(float deltaTime)
     {
-        //if (_playerStateMachine.CharacterController.isGrounded)
-        //    lastGroundedTime = Time.time;
+        _dashDuration += deltaTime / _duration;
+        normalizedTime = Mathf.Clamp01(_dashDuration);
+        speedMultiplier = _playerStateMachine.slideSpeedCurve.Evaluate(normalizedTime);
         _playerStateMachine.ForceReceiver.verticalVelocity = 0f;
 
-        duration -= deltaTime;
-        if (duration <= 0f)
+        if (shouldGoInOppositeDir)
         {
-            _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
-            return;
+            _playerStateMachine.transform.rotation = Quaternion.LookRotation(-_playerStateMachine.transform.forward);
+            _dashDirection = -_playerStateMachine.transform.forward;
         }
+        else
+            _dashDirection = _playerStateMachine.transform.forward;
 
-        Move(deltaTime);
+
+        Vector3 move = _dashDirection * _playerStateMachine.PlayerStats.DashForce * speedMultiplier;
+        _playerStateMachine.CharacterController.Move(move * deltaTime);
+        if (_dashDuration >= 1f)
+            _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
+
     }
 
     public override void Exit()
     {
-        //_playerStateMachine.ForceReceiver.SetForce(Vector3.zero);
         var currentImpact = _playerStateMachine.ForceReceiver.Movement;
         currentImpact.y = 0f;
 
-        // Keep a fraction of the dash momentum for a single frame to prevent direction flip
         _playerStateMachine.ForceReceiver.SetForce(currentImpact * 0.25f);
     }
 

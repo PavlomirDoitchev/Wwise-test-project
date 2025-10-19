@@ -19,7 +19,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         private float initialHorizontalPush = 5f;
         private float initialVerticalPush = 15f;
-        private float holdVerticalFactor = 0.2f; 
+        private float holdVerticalFactor = 0.2f;
         private Vector3 forwardMotion;
 
         public PlayerWallJumpState(PlayerStateMachine stateMachine, Vector3 direction) : base(stateMachine)
@@ -29,7 +29,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Enter()
         {
-            
+
             _playerStateMachine.Animator.CrossFadeInFixedTime("Jump", 0.1f);
             _playerStateMachine.ForceReceiver.ResetForces();
 
@@ -46,7 +46,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             }
             else
             {
-                horizontalDir = jumpDirection.x >= 0 ? Vector3.right : Vector3.left; 
+                horizontalDir = jumpDirection.x >= 0 ? Vector3.right : Vector3.left;
             }
 
             Vector3 finalJumpDir = (horizontalDir + Vector3.up).normalized;
@@ -64,9 +64,9 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         public override void Tick(float deltaTime)
         {
-          
-            elapsed += deltaTime;
 
+            elapsed += deltaTime;
+            DoDash();
             if (isJumping && _playerStateMachine.InputManager.JumpHeld() && jumpTime < maxJumpTime)
             {
                 float extraVertical = initialVerticalPush * holdVerticalFactor * deltaTime / maxJumpTime;
