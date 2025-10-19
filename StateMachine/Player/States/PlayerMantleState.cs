@@ -18,12 +18,15 @@ namespace Assets.Scripts.StateMachine.Player.States
         {
             _playerStateMachine.Animator.CrossFadeInFixedTime("Mantle", 0.1f);
             _playerStateMachine.ForceReceiver.ResetForces();
-            // _playerStateMachine.CharacterController.enabled = false;
         }
 
         public override void Tick(float deltaTime)
         {
             _timer += deltaTime;
+            if (_playerStateMachine.InputManager.CrouchInput() && _timer <= _playerStateMachine.waitForClimbThreshold) 
+            {
+                _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
+            }
             float t = Mathf.Clamp01(_timer / _mantleAnimationDuration);
             _playerStateMachine.ForceReceiver.verticalVelocity = 0f;
             if (_timer >= _playerStateMachine.waitForClimbThreshold)
@@ -38,14 +41,12 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             if (_timer >= _mantleAnimationDuration)
             {
-                //_playerStateMachine.CharacterController.enabled = true;
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
             }
         }
 
         public override void Exit()
         {
-            //_playerStateMachine.CharacterController.enabled = true;
             _playerStateMachine.ForceReceiver.ResetForces();
         }
     }
