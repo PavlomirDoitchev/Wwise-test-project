@@ -17,8 +17,8 @@ namespace Assets.Scripts.StateMachine.Player.States
 
         private Vector3 hangPoint, standPoint;
 
-        private float initialHorizontalPush = 5f;
-        private float initialVerticalPush = 15f;
+        private float initialHorizontalPush = 4f;
+        private float initialVerticalPush = 25f;
         private float holdVerticalFactor = 0.2f;
         private Vector3 forwardMotion;
 
@@ -75,7 +75,7 @@ namespace Assets.Scripts.StateMachine.Player.States
                     forwardMotion = Vector3.left;
                 }
                 else { forwardMotion = Vector3.right; }
-                _playerStateMachine.ForceReceiver.JumpTo(extraVertical, forwardMotion);
+                _playerStateMachine.ForceReceiver.JumpTo(extraVertical, forwardMotion * .5f);
                 jumpTime += deltaTime;
             }
             else
@@ -91,7 +91,7 @@ namespace Assets.Scripts.StateMachine.Player.States
 
             Move(_playerStateMachine.ForceReceiver.Movement * deltaTime, deltaTime);
 
-            if (_playerStateMachine.ForceReceiver.verticalVelocity <= -10f)
+            if (_playerStateMachine.ForceReceiver.verticalVelocity <= -10f || _playerStateMachine.CharacterController.isGrounded)
             {
                 Vector3 horizontalMomentum = GetHorizontalMomentum();
                 Debug.Log($"[WallJump→Fall] Momentum: {_playerStateMachine.ForceReceiver.Movement}, Facing: {_playerStateMachine.transform.forward}");
