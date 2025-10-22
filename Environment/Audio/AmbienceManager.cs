@@ -6,6 +6,8 @@ namespace Assets.Scripts.Environment.Audio
     {
         [SerializeField] private string ambienceEvent = "Play_Forest_Day";
         [SerializeField] private string ambienceMusicEvent = "Play_Village_Music";
+        [SerializeField] private string ambienceMusicStopEvent = "Stop_Village_Music";
+        private bool isMusicPlaying = false;
         //[SerializeField] private string stopAmbienceEvent = "Stop_Ambience_Forest";
         private void Start()
         {
@@ -13,10 +15,16 @@ namespace Assets.Scripts.Environment.Audio
         }
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.M))
+            if (Input.GetKeyDown(KeyCode.M) && !isMusicPlaying)
             {
-                AkUnitySoundEngine.PostEvent(ambienceMusicEvent, gameObject);
 
+                AkUnitySoundEngine.PostEvent(ambienceMusicEvent, gameObject);
+                isMusicPlaying = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.M) && isMusicPlaying)
+            {
+                AkUnitySoundEngine.PostEvent(ambienceMusicStopEvent, gameObject);
+                isMusicPlaying = false;
             }
         }
         //private void OnDestroy()

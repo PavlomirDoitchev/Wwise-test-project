@@ -23,6 +23,7 @@ public class PlayerDashState : PlayerBaseState
     public override void Enter()
     {
         _playerStateMachine.Animator.CrossFadeInFixedTime("Dash", 0.1f);
+        AkUnitySoundEngine.PostEvent("Play_Dash", _playerStateMachine.gameObject);
 
     }
 
