@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.State_Machine.Player_State_Machine;
 using Assets.Scripts.StateMachine.Player.States;
+using Assets.Scripts.Utilities.Contracts;
 using System.Collections;
 using UnityEngine;
 using static UnityEngine.UI.Image;
@@ -323,32 +324,20 @@ namespace Assets.Scripts.StateMachine.Player
             ledgeStandPoint = Vector3.zero;
 
             Transform player = _playerStateMachine.transform;
-            _playerStateMachine.origin = player.position + Vector3.up;
-            _playerStateMachine.forward = player.forward;
+            Vector3 origin = player.position + Vector3.up * 1f;
+            Vector3 direction = player.forward;
+            float checkDistance = 0.7f;
 
-
-
-            float forwardCheckDistance = 0.6f;
-            float maxLedgeHeight = 1.5f; 
-            float minLedgeHeight = 0.3f; 
-
-            if (Physics.Raycast(_playerStateMachine.origin, _playerStateMachine.forward, out RaycastHit wallHit, forwardCheckDistance))
+            if (Physics.Raycast(origin, direction, out RaycastHit hit, checkDistance))
             {
-                Vector3 ledgeCheckStart = wallHit.point + Vector3.up * maxLedgeHeight;
-
-                if (Physics.Raycast(ledgeCheckStart, Vector3.down, out RaycastHit ledgeHit, maxLedgeHeight + 0.5f))
+                if (hit.collider.TryGetComponent<IClimable>(out IClimable climbable))
                 {
-                    float ledgeHeight = ledgeHit.point.y - player.position.y;
-
-                    if (ledgeHeight > minLedgeHeight && ledgeHeight <= maxLedgeHeight)
-                    {
-                        Vector3 forwardOffset = wallHit.normal * -0.4f;
-                        ledgeHangPoint = wallHit.point;
-                        ledgeStandPoint = ledgeHit.point + forwardOffset;
-                        return true;
-                    }
+                    ledgeHangPoint = climbable.GetHangPoint();
+                    ledgeStandPoint = climbable.GetStandPoint();
+                    return true;
                 }
             }
+
             return false;
         }
 
