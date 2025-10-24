@@ -11,6 +11,7 @@ public class CameraSidescroller : MonoBehaviour
     [Header("Zoom")]
     [SerializeField, Range(1f, 20f)] private float minDistance = 2f;
     [SerializeField, Range(1f, 20f)] private float maxDistance = 10f;
+    [SerializeField, Range(1f, 20f)] private float currentDistance;
     [SerializeField] private float zoomSpeed = 5f;
 
     [Header("Dead Zone")]
@@ -25,7 +26,7 @@ public class CameraSidescroller : MonoBehaviour
     [SerializeField] private float tiltX = 15f;
 
     private Camera cam;
-    private float currentDistance;
+    //private float currentDistance;
     private Vector3 cameraTargetPos;
 
     private float currentLookAheadX = 0f;
