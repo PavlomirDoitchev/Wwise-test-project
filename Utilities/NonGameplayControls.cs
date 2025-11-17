@@ -37,6 +37,7 @@ public class NonGameplayControls : MonoBehaviour, IObserver
     {
         Time.timeScale = 0f;
         isPaused = true;
+        _playerInfo.enabled = false;    
         _player.InputManager.InputEnabled = false;
         _canvas.enabled = true;
         AkUnitySoundEngine.SetState("GamePause", "Paused");
@@ -46,6 +47,7 @@ public class NonGameplayControls : MonoBehaviour, IObserver
     {
         Time.timeScale = 1f;
         isPaused = false;
+        _playerInfo.enabled = true;
         _canvas.enabled = false;
         AkUnitySoundEngine.SetState("GamePause", "Playing");
         StartCoroutine(EnableInputNextFrame());
