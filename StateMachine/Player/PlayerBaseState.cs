@@ -33,15 +33,38 @@ namespace Assets.Scripts.StateMachine.Player
         /// <summary>
         /// Moves the player including applied forces from ForceReceiver.
         /// </summary>
+        //protected void Move(Vector3 movement, float deltaTime)
+        //{
+        //    _playerStateMachine.CharacterController.Move((movement + _playerStateMachine.ForceReceiver.Movement) * deltaTime);
+
+        //    Vector3 pos = _playerStateMachine.transform.position;
+        //    pos.z = 0f;
+        //    _playerStateMachine.transform.position = pos;
+        //}
         protected void Move(Vector3 movement, float deltaTime)
         {
-            _playerStateMachine.CharacterController.Move((movement + _playerStateMachine.ForceReceiver.Movement) * deltaTime);
+            Vector3 finalMovement = movement + _playerStateMachine.ForceReceiver.Movement;
+
+            _playerStateMachine.CharacterController.Move(finalMovement * deltaTime);
 
             Vector3 pos = _playerStateMachine.transform.position;
             pos.z = 0f;
             _playerStateMachine.transform.position = pos;
         }
-
+        /// <summary>
+        /// Applies platform movement - should be called ONCE per frame in states that are grounded.
+        /// Call this AFTER all other movement is done.
+        /// </summary>
+        protected void ApplyPlatformMovement(float deltaTime)
+        {
+            if (_playerStateMachine.CharacterController.isGrounded &&
+                _playerStateMachine.CurrentPlatform != null)
+            {
+                Vector3 platformDelta = _playerStateMachine.CurrentPlatform.PlatformDeltaPosition;
+                if (platformDelta.sqrMagnitude > 0f)
+                    _playerStateMachine.CharacterController.Move(platformDelta);
+            }
+        }
         /// <summary>
         /// Moves only by forces (used when no input movement).
         /// </summary>
@@ -50,8 +73,40 @@ namespace Assets.Scripts.StateMachine.Player
             Move(Vector3.zero, deltaTime);
         }
 
+        ///// <summary>
+        ///// Standard locomotion movement. Sets speed to .5 for running, 1 for sprint.
+        ///// </summary>
+        //protected void PlayerMove(float deltaTime)
+        //{
+        //    Vector2 input = _playerStateMachine.InputManager.MovementInput();
+        //    _isSprinting = _playerStateMachine.InputManager.SprintInput();
+
+        //    float baseSpeed = _playerStateMachine.PlayerStats.BaseSpeed;
+        //    float speedMultiplier = _isSprinting ? 1.3f : 1f;
+
+        //    Vector2 filteredInput = GetFilteredMovementInput();
+        //    Vector3 targetMovement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
+
+        //    // Smooth current movement towards targetMovement
+        //    float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; 
+        //    _playerStateMachine.CurrentVelocity = Vector3.MoveTowards(
+        //        _playerStateMachine.CurrentVelocity,
+        //        targetMovement,
+        //        acceleration * deltaTime
+        //    );
+
+        //    Move(_playerStateMachine.CurrentVelocity, deltaTime);
+        //    HandleFlip(filteredInput.x);
+
+        //    float locomotionValue = 0f;
+        //    if (filteredInput != Vector2.zero)
+        //        locomotionValue = _isSprinting ? 1f : 0.5f;
+
+        //    _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.05f, deltaTime);
+        //}
         /// <summary>
-        /// Standard locomotion movement. Sets speed to .5 for running, 1 for sprint.
+        /// Standard locomotion movement with platform support.
+        /// Platform movement is applied separately to avoid duplicate application.
         /// </summary>
         protected void PlayerMove(float deltaTime)
         {
@@ -65,14 +120,19 @@ namespace Assets.Scripts.StateMachine.Player
             Vector3 targetMovement = new Vector3(filteredInput.x, 0f, 0f) * baseSpeed * speedMultiplier;
 
             // Smooth current movement towards targetMovement
-            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration; 
+            float acceleration = _playerStateMachine.PlayerStats.GroundAcceleration;
             _playerStateMachine.CurrentVelocity = Vector3.MoveTowards(
                 _playerStateMachine.CurrentVelocity,
                 targetMovement,
                 acceleration * deltaTime
             );
 
+            // Apply player movement
             Move(_playerStateMachine.CurrentVelocity, deltaTime);
+
+            // Apply platform movement separately - this prevents double application
+            ApplyPlatformMovement(deltaTime);
+
             HandleFlip(filteredInput.x);
 
             float locomotionValue = 0f;
@@ -81,7 +141,6 @@ namespace Assets.Scripts.StateMachine.Player
 
             _playerStateMachine.Animator.SetFloat("Locomotion", locomotionValue, 0.05f, deltaTime);
         }
-
 
         protected void PlayerMoveAirborne(float deltaTime, Vector3 scaledInput)
         {

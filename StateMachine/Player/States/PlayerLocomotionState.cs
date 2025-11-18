@@ -40,6 +40,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             }
 
             PlayerMove(deltaTime);
+            ApplyPlatformMovement(deltaTime);
             Fall(deltaTime);
             DoCrouch();
             DoJump();

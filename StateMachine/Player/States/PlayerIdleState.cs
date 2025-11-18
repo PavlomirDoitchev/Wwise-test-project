@@ -18,6 +18,7 @@ namespace Assets.Scripts.StateMachine.Player.States
             if (input.x != 0 || _playerStateMachine.ForceReceiver.verticalVelocity < -2f)
                 _playerStateMachine.ChangeState(new PlayerLocomotionState(_playerStateMachine));
             Move(deltaTime);
+            ApplyPlatformMovement(deltaTime);
             DoCrouch();
             //Fall(deltaTime);
             DoJump();

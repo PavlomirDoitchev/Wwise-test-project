@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Entities;
+using Assets.Scripts.Environment.Platforms;
 using Assets.Scripts.StateMachine.Player.States;
 using Assets.Scripts.Utilities.Contracts;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Assets.Scripts.StateMachine.Player
         public INotPushable currentLeftBlocker = null;
         public INotPushable currentRightBlocker = null;
         public LayerMask groundMask;
+        public MovingPlatform CurrentPlatform { get; set; }
         public float probeDistance = 0.1f;
         [SerializeField] private int minProbesRequired = 2;
         public Transform[] groundProbes;
@@ -40,7 +42,6 @@ namespace Assets.Scripts.StateMachine.Player
         public float forwardCheckDistance = 0.6f;
         public float waitForClimbThreshold = .2f;
 
-
         public AnimationCurve slideSpeedCurve;
 
 
@@ -59,9 +60,62 @@ namespace Assets.Scripts.StateMachine.Player
         {
             ChangeState(new PlayerLocomotionState(this));
         }
-        
+
+        //private void FixedUpdate()
+        //{
+        //    if (!CharacterController.isGrounded)
+        //    {
+        //        CurrentPlatform = null;
+        //    }
+        //    if (currentLeftBlocker != null)
+        //    {
+        //        bool stillBlocked = false;
+        //        for (int i = 0; i < blockerCheckRays; i++)
+        //        {
+        //            float t = i / (float)(blockerCheckRays - 1);
+        //            Vector3 origin = transform.position + Vector3.up * (t * blockerCheckHeight);
+        //            if (Physics.Raycast(origin, Vector3.left, blockerCheckDistance))
+        //            {
+        //                stillBlocked = true;
+        //                break;
+        //            }
+        //        }
+
+        //        if (!stillBlocked)
+        //            currentLeftBlocker = null;
+        //    }
+
+        //    if (currentRightBlocker != null)
+        //    {
+        //        bool stillBlocked = false;
+        //        for (int i = 0; i < blockerCheckRays; i++)
+        //        {
+        //            float t = i / (float)(blockerCheckRays - 1);
+        //            Vector3 origin = transform.position + Vector3.up * (t * blockerCheckHeight);
+        //            if (Physics.Raycast(origin, Vector3.right, blockerCheckDistance))
+        //            {
+        //                stillBlocked = true;
+        //                break;
+        //            }
+        //        }
+
+        //        if (!stillBlocked)
+        //            currentRightBlocker = null;
+        //    }
+        //}
         private void FixedUpdate()
         {
+            // Clear platform reference when airborne
+            if (!CharacterController.isGrounded)
+            {
+                if (CurrentPlatform != null)
+                {
+                    CurrentPlatform = null;
+                    ForceReceiver.ExitPlatform();
+                }
+            }
+
+            // Check left blocker
             if (currentLeftBlocker != null)
             {
                 bool stillBlocked = false;
@@ -80,6 +134,7 @@ namespace Assets.Scripts.StateMachine.Player
                     currentLeftBlocker = null;
             }
 
+            // Check right blocker
             if (currentRightBlocker != null)
             {
                 bool stillBlocked = false;
@@ -98,7 +153,6 @@ namespace Assets.Scripts.StateMachine.Player
                     currentRightBlocker = null;
             }
         }
-
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (CurrentState is PlayerBaseState playerState)
@@ -106,10 +160,24 @@ namespace Assets.Scripts.StateMachine.Player
                 playerState.OnControllerColliderHit(hit);
             }
 
+            // inside OnControllerColliderHit
+            if (hit.collider.TryGetComponent(out MovingPlatform platform))
+            {
+                if (hit.normal.y > 0.5f && CharacterController.isGrounded)
+                {
+                    // assign platform and freeze ForceReceiver (don't inject velocity)
+                    CurrentPlatform = platform;
+                    ForceReceiver.EnterPlatform();
+                }
+            }
+
+            // Don't process pushable objects
             if (hit.gameObject.TryGetComponent<IPushable>(out _)) return;
 
+            // Handle non-pushable blockers (walls)
             if (hit.gameObject.TryGetComponent<INotPushable>(out INotPushable notPushable))
             {
+                // Only consider as blocker if it's a vertical wall (not floor/ceiling)
                 if (Mathf.Abs(hit.normal.y) < 0.1f)
                 {
                     if (hit.normal.x > 0) currentLeftBlocker = notPushable;
