@@ -2,6 +2,13 @@
 
 namespace Assets.Scripts.Environment.Platforms
 {
+    /// <summary>
+    /// Kinematic moving platform using Rigidbody.MovePosition in FixedUpdate
+    /// and exposing a per-frame PlatformDeltaPosition computed from the
+    /// interpolated transform in LateUpdate.
+    /// Add a Rigidbody to the platform GameObject and set isKinematic = true,
+    /// interpolation = Interpolate.
+    /// </summary>
     public class MovingPlatform : MonoBehaviour
     {
         [SerializeField] Transform[] waypoints;
@@ -9,57 +16,82 @@ namespace Assets.Scripts.Environment.Platforms
         [SerializeField] float arrivalThreshold = 0.1f;
 
         private int currentWaypointIndex = 0;
-        private Vector3 lastPosition;
+        private Rigidbody rb;
 
-        // Per-frame delta position (world-space) for this frame. Use this on the player.
+        // Physics-step position (used for MovePosition)
+        private Vector3 previousFixedPosition;
+
+        // Render-step position for per-frame delta
+        private Vector3 lastRenderPosition;
+
+        // Per-frame displacement to be applied to the player (in world space)
         public Vector3 PlatformDeltaPosition { get; private set; }
 
-        // Per-second velocity (derived from PlatformDeltaPosition / Time.deltaTime)
+        // Optional: velocity derived from the per-frame delta
         public Vector3 PlatformVelocity { get; private set; }
+
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                Debug.LogError("MovingPlatform: Add a Rigidbody and set isKinematic = true.");
+            }
+            else
+            {
+                rb.isKinematic = true;
+                rb.interpolation = RigidbodyInterpolation.Interpolate;
+            }
+        }
 
         private void Start()
         {
-            if (waypoints.Length > 0)
-                transform.position = waypoints[0].position;
-            lastPosition = transform.position;
+            if (waypoints != null && waypoints.Length > 0 && waypoints[0] != null)
+            {
+                if (rb != null)
+                    rb.position = waypoints[0].position;
+                else
+                    transform.position = waypoints[0].position;
+            }
+
+            previousFixedPosition = transform.position;
+            lastRenderPosition = transform.position;
             PlatformDeltaPosition = Vector3.zero;
             PlatformVelocity = Vector3.zero;
         }
 
         private void FixedUpdate()
         {
-            if (waypoints.Length == 0) return;
+            if (waypoints == null || waypoints.Length == 0 || waypoints[currentWaypointIndex] == null) return;
 
-            Transform targetWaypoint = waypoints[currentWaypointIndex];
             float step = speed * Time.fixedDeltaTime;
+            Vector3 currentPos = rb != null ? rb.position : transform.position;
+            Vector3 target = waypoints[currentWaypointIndex].position;
+            Vector3 newPos = Vector3.MoveTowards(currentPos, target, step);
 
-            Vector3 newPosition = Vector3.MoveTowards(transform.position, targetWaypoint.position, step);
+            if (rb != null)
+                rb.MovePosition(newPos);
+            else
+                transform.position = newPos;
 
-            // Move platform (physics timestep)
-            transform.position = newPosition;
+            PlatformVelocity = (newPos - previousFixedPosition) / Time.fixedDeltaTime;
 
-            // Waypoint arrival check (based on position after moving)
-            if (Vector3.Distance(transform.position, targetWaypoint.position) < arrivalThreshold)
-            {
+            if (Vector3.Distance(newPos, target) < arrivalThreshold)
                 currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-            }
 
-            // Note: we do NOT compute PlatformDeltaPosition/PlatformVelocity here,
-            // because FixedUpdate runs on the physics timestep while the player
-            // expects per-frame deltas. We compute the per-frame delta in LateUpdate.
+            previousFixedPosition = newPos;
         }
 
-        // Compute the per-frame delta in LateUpdate so that it reflects the actual
-        // displacement that happened this frame and can be applied to the CharacterController.
+        // Read the interpolated transform.position so the visual motion is smooth,
+        // and compute the per-frame delta for the player to apply.
         private void LateUpdate()
         {
-            // Platform delta since last frame (world-space)
-            PlatformDeltaPosition = transform.position - lastPosition;
+            PlatformDeltaPosition = transform.position - lastRenderPosition;
 
             float dt = Time.deltaTime > 0f ? Time.deltaTime : Time.fixedDeltaTime;
-            PlatformVelocity = PlatformDeltaPosition / dt;
+            PlatformVelocity = (dt > 0f) ? (PlatformDeltaPosition / dt) : Vector3.zero;
 
-            lastPosition = transform.position;
+            lastRenderPosition = transform.position;
         }
 
         private void OnDrawGizmos()

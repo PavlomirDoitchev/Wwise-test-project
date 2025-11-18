@@ -22,8 +22,8 @@ namespace Assets.Scripts.StateMachine.Player.States
                 _playerStateMachine.ChangeState(new PlayerIdleState(_playerStateMachine));
                 return;
             }
-            ApplyPlatformMovement(deltaTime);
             Move(deltaTime);
+            ApplyPlatformMovement(deltaTime);
             //HandleFlip(deltaTime);
             DoJump();
             DoDash();
